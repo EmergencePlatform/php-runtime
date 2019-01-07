@@ -10,6 +10,7 @@ pkg_deps=(
   core/git
 )
 
+pkg_bin_dirs=(bin)
 
 pkg_binds=(
   [database]="port username password"
@@ -25,7 +26,25 @@ do_build() {
 }
 
 do_install() {
-  return 0
+  build_line "Creating command wrappers"
+
+  cat > "${pkg_prefix}/bin/emergence-php-exec" <<- EOM
+#!/bin/sh
+exec ${pkg_svc_config_path}/fpm-exec \$@
+EOM
+
+  cat > "${pkg_prefix}/bin/emergence-php-load" <<- EOM
+#!/bin/sh
+
+if [ "\$1" == '--stdin' ]; then
+  shift
+  EXEC_OPTIONS='--stdin'
+fi
+
+exec emergence-php-exec \$EXEC_OPTIONS PUT load.php \$@
+EOM
+
+  chmod +x "${pkg_prefix}/bin/"*
 }
 
 do_strip() {

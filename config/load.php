@@ -31,6 +31,10 @@ putenv("GIT_WORK_TREE=${siteRoot}");
 putenv("GIT_INDEX_FILE=${siteRoot}.INDEX");
 
 
+// prepare work tree
+mkdir($siteRoot, 0755, true);
+
+
 // convert input to a hash
 $inputHash = exec("$git rev-parse --verify ".escapeshellarg("$treeish"));
 

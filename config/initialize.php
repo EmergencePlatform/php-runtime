@@ -22,7 +22,7 @@ $coreRoot = '{{#if cfg.core.root}}{{ cfg.core.root }}{{else}}{{pkgPathFor "emerg
 
 
 // determine hostname
-$hostname = empty($_SERVER['HTTP_HOST']) ? 'localhost' : $_SERVER['HTTP_HOST'];
+$hostname = empty($_SERVER['HTTP_HOST']) ? 'localhost' : parse_url($_SERVER['HTTP_HOST'], PHP_URL_HOST);
 
 
 // load bootstrap PHP code

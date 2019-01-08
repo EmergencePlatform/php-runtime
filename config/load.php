@@ -32,7 +32,9 @@ putenv("GIT_INDEX_FILE=${siteRoot}.INDEX");
 
 
 // prepare work tree
-mkdir($siteRoot, 0755, true);
+if (!is_dir($siteRoot)) {
+    mkdir($siteRoot, 0755, true);
+}
 
 
 // convert input to a hash

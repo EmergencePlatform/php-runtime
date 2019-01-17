@@ -4,6 +4,6 @@ mkdir -p "{{pkg.svc_var_path}}/logs"
 chown -R hab:hab "{{pkg.svc_var_path}}/logs"
 
 {{#if cfg.site.holo.repo}}
-    mkdir -p "{{pkg.svc_var_path}}/site"
-    chown -R hab:hab "{{pkg.svc_var_path}}/site"
+    mkdir -p "{{pkg.svc_var_path}}/site" "{{pkg.svc_var_path}}/site-data"
+    chown -R hab:hab "{{pkg.svc_var_path}}/site" "{{pkg.svc_var_path}}/site-data"
 {{/if}}

@@ -13,7 +13,7 @@ $coreRoot = '{{#if cfg.core.root}}{{ cfg.core.root }}{{else}}{{pkgPathFor "emerg
     $siteRoot = '{{cfg.sites.default.root }}';
 {{else ~}}
     {{#if cfg.sites.default.holo.gitDir ~}}
-        $siteRoot = '{{pkg.svc_var_path }}/site';
+        $siteRoot = '{{pkg.svc_var_path }}';
     {{else ~}}
         error_log('initialize.php needs sites.default.root or cfg.sites.default.holo.gitDir configured');
         exit(1);

@@ -1,9 +1,11 @@
 #!/bin/bash
 
-mkdir -p "{{pkg.svc_var_path}}/logs"
-chown -R hab:hab "{{pkg.svc_var_path}}/logs"
+mkdir -p \
+    "{{pkg.svc_var_path}}/logs" \
+    "{{pkg.svc_var_path}}/site" \
+    "{{pkg.svc_var_path}}/site-data"
 
-{{#if cfg.site.holo.repo}}
-    mkdir -p "{{pkg.svc_var_path}}/site" "{{pkg.svc_var_path}}/site-data"
-    chown -R hab:hab "{{pkg.svc_var_path}}/site" "{{pkg.svc_var_path}}/site-data"
-{{/if}}
+chown -R hab:hab \
+    "{{pkg.svc_var_path}}/logs" \
+    "{{pkg.svc_var_path}}/site" \
+    "{{pkg.svc_var_path}}/site-data"

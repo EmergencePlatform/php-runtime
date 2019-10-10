@@ -10,13 +10,12 @@
 // determine root paths
 $coreRoot = '{{#if cfg.core.root}}{{ cfg.core.root }}{{else}}{{pkgPathFor "emergence/php-core" }}{{/if}}';
 {{#if cfg.sites.default.root ~}}
-    $siteRoot = '{{cfg.sites.default.root }}';
+    $siteRoot = '{{cfg.sites.default.root}}';
 {{else ~}}
     {{#if cfg.sites.default.holo.gitDir ~}}
-        $siteRoot = '{{pkg.svc_var_path }}';
+        $siteRoot = '{{pkg.svc_var_path}}';
     {{else ~}}
-        error_log('initialize.php needs sites.default.root or cfg.sites.default.holo.gitDir configured');
-        exit(1);
+        $siteRoot = '{{pkg.path}}';
     {{/if ~}}
 {{/if}}
 

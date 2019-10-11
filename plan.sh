@@ -9,7 +9,6 @@ pkg_build_deps=(
 pkg_deps=(
   emergence/php5
   emergence/php-core
-  core/libfcgi
   core/git
 )
 

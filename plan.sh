@@ -3,6 +3,9 @@ pkg_origin=emergence
 pkg_version="0.3"
 pkg_maintainer="Chris Alfano <chris@jarv.us>"
 pkg_license=("MIT")
+pkg_build_deps=(
+  core/toml-merge
+)
 pkg_deps=(
   emergence/php5
   emergence/php-core

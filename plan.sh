@@ -44,7 +44,18 @@ fi
 exec emergence-php-exec \$EXEC_OPTIONS PUT load.php \$@
 EOM
 
-  chmod +x "${pkg_prefix}/bin/"*
+  chmod +x "${pkg_prefix}/bin"/*
+}
+
+do_build_config() {
+  do_default_build_config
+
+  build_line "Merging php5 config"
+  cp -nrv "$(pkg_path_for emergence/php5)"/{config_install,config,hooks} "${pkg_prefix}/"
+  toml-merge \
+    "$(pkg_path_for emergence/php5)/default.toml" \
+    "${PLAN_CONTEXT}/default.toml" \
+    > "${pkg_prefix}/default.toml"
 }
 
 do_strip() {

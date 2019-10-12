@@ -2,8 +2,8 @@
 
 
 // configure timezone
-{{#if cfg.sites.default.timezone ~}}
-    date_default_timezone_set({{toJson cfg.sites.default.timezone}});
+{{#if cfg.default_timezone ~}}
+    date_default_timezone_set({{toJson cfg.default_timezone}});
 {{/if}}
 
 

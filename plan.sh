@@ -7,9 +7,10 @@ pkg_build_deps=(
   jarvus/toml-merge
 )
 pkg_deps=(
+  core/bash
+  core/git
   emergence/php5
   emergence/php-core
-  core/git
 )
 
 pkg_bin_dirs=(bin)

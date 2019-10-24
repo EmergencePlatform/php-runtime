@@ -2,12 +2,13 @@
 
 exec 2>&1
 
-mkdir -p \
-    "{{pkg.svc_var_path}}/logs" \
-    "{{pkg.svc_var_path}}/site" \
-    "{{pkg.svc_var_path}}/site-data"
+ln -vsf "{{pkg.svc_data_path}}" "{{pkg.svc_var_path}}/site-data"
 
-chown -R hab:hab \
+mkdir -vp \
+    "{{pkg.svc_var_path}}/logs" \
+    "{{pkg.svc_var_path}}/site"
+
+chown -vR hab:hab \
     "{{pkg.svc_var_path}}/logs" \
     "{{pkg.svc_var_path}}/site" \
-    "{{pkg.svc_var_path}}/site-data"
+    "{{pkg.svc_data_path}}"

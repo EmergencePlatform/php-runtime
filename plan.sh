@@ -9,8 +9,6 @@ pkg_build_deps=(
 pkg_deps=(
   core/bash
   core/git
-  jarvus/ghostscript
-  jarvus/imagemagick
   emergence/php5
   emergence/php-core
 )

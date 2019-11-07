@@ -2,7 +2,7 @@
 
 exec 2>&1
 
-ln -vsf "{{pkg.svc_data_path}}" "{{pkg.svc_var_path}}/site-data"
+ln -vsfT "{{pkg.svc_data_path}}" "{{pkg.svc_var_path}}/site-data"
 
 mkdir -vp \
     "{{pkg.svc_var_path}}/logs" \

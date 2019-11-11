@@ -49,5 +49,9 @@ Site::initialize($siteRoot, $hostname, [
     'logger' => [
         'dump' => {{toJson cfg.logger.dump}},
         'root' => '{{ pkg.svc_var_path }}/logs'
+    ],
+
+    'storage' => [
+        'local_root' => '{{ pkg.svc_data_path }}'
     ]
 ]);

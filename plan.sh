@@ -41,7 +41,7 @@ do_install() {
   build_line "Creating command wrappers"
 
   cat > "${pkg_prefix}/bin/emergence-php-exec" <<- EOM
-#!/bin/sh
+#!/bin/bash
 exec ${pkg_svc_config_path}/fpm-exec \$@
 EOM
 

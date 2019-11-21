@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ "$1" == '--stdin' ]; then
+  shift
+  EXEC_OPTIONS='--stdin'
+fi
+
+exec emergence-php-exec $EXEC_OPTIONS PUT load.php $@

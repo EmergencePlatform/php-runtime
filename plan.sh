@@ -45,16 +45,7 @@ do_install() {
 exec ${pkg_svc_config_path}/fpm-exec \$@
 EOM
 
-  cat > "${pkg_prefix}/bin/emergence-php-load" <<- EOM
-#!/bin/sh
-
-if [ "\$1" == '--stdin' ]; then
-  shift
-  EXEC_OPTIONS='--stdin'
-fi
-
-exec emergence-php-exec \$EXEC_OPTIONS PUT load.php \$@
-EOM
+  cp -v "${PLAN_CONTEXT}/bin"/* "${pkg_prefix}/bin/"
 
   chmod +x "${pkg_prefix}/bin"/*
 }

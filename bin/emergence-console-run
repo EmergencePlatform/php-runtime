@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ "$1" == '--stdin' ]; then
+  shift
+  EXEC_OPTIONS='--stdin'
+fi
+
+exec emergence-php-exec $EXEC_OPTIONS GET console-run.php $@

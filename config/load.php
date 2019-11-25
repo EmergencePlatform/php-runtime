@@ -16,7 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] != 'PUT') {
 
 
 // read input tree-ish
-$treeish = trim(file_get_contents('php://input'));
+$treeish = !empty($_SERVER['QUERY_STRING'])
+    ? $_SERVER['QUERY_STRING']
+    : trim(file_get_contents('php://input'));
 
 if (!$treeish) {
     error_log('load.php must have tree-ish provided via STDIN');

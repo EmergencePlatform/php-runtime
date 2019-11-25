@@ -6,10 +6,11 @@ pkg_license=("MIT")
 pkg_build_deps=(
   jarvus/toml-merge
 )
+php_pkg_ident="emergence/php5"
 pkg_deps=(
   core/bash
   core/git
-  emergence/php5
+  "${php_pkg_ident}"
   emergence/php-core
 )
 
@@ -54,10 +55,10 @@ EOM
 do_build_config() {
   do_default_build_config
 
-  build_line "Merging php5 config"
-  cp -nrv "$(pkg_path_for emergence/php5)"/{config_install,config,hooks} "${pkg_prefix}/"
+  build_line "Merging config from ${php_pkg_ident}"
+  cp -nrv "$(pkg_path_for ${php_pkg_ident})"/{config_install,config,hooks} "${pkg_prefix}/"
   toml-merge \
-    "$(pkg_path_for emergence/php5)/default.toml" \
+    "$(pkg_path_for ${php_pkg_ident})/default.toml" \
     "${PLAN_CONTEXT}/default.toml" \
     > "${pkg_prefix}/default.toml"
 }

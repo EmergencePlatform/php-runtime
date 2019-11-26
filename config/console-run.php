@@ -15,6 +15,10 @@ require('{{ pkg.svc_config_path }}/initialize.php');
 header('Content-Type: text/plain');
 
 
+// disable time limit
+set_time_limit(0);
+
+
 // initialize console-based logger
 $logger = new ConsoleLogger;
 

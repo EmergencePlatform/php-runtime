@@ -65,6 +65,7 @@ if ($command) {
     // build faux-superglobal
     $_COMMAND = [
         'SCRIPT_PATH' => $node->RealPath,
+        'ARGS' => $args,
         'LOGGER' => $logger
     ];
 

@@ -22,6 +22,9 @@ pkg_binds=(
 
 pkg_exports=(
   [port]=network.port
+  # [root]=nginx.root
+  # [index]=nginx.index
+  [nginx_server_snippet]=nginx.server_snippet
 )
 
 

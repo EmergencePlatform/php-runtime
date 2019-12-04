@@ -1,2 +1,7 @@
 [core]
 root = ""
+
+[nginx]
+# root = "web/public"
+# index = "index.php"
+server_snippet = "# php-runtime nginx snippet"

@@ -20,6 +20,12 @@ set_time_limit(0);
 
 
 // initialize console-based logger
+if (!class_exists(ConsoleLogger::class)) {
+    echo ConsoleLogger::class." not available within currently loaded site\n";
+    echo "Site must be updated to support running console commands\n";
+    exit(1);
+}
+
 $logger = new ConsoleLogger;
 
 

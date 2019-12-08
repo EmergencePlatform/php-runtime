@@ -64,7 +64,6 @@ exec ${pkg_svc_config_path}/fpm-exec \$@
 EOM
 
   fix_interpreter "${pkg_prefix}/bin/*" core/bash bin/bash
-
   chmod +x "${pkg_prefix}/bin"/*
 }
 

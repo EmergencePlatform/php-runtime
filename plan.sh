@@ -30,6 +30,7 @@ pkg_exports=(
 
 do_setup_environment() {
   set_runtime_env -f PHPRC "${pkg_svc_config_install_path}"
+  set_runtime_env -f MYSQL_HOME "${pkg_svc_config_path}"
 }
 
 do_before() {

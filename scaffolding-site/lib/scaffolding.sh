@@ -44,7 +44,7 @@ scaffolding_detect_pkg_version() {
   if [ -n "${pkg_last_tag}" ] && [ ${pkg_last_tag_distance} -eq 0 ]; then
     echo "${pkg_last_version}"
   else
-    echo "${pkg_last_version}+git"
+    echo "${pkg_last_version}-git"
   fi
 }
 

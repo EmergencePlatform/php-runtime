@@ -24,6 +24,7 @@ pkg_exports=(
   [port]=network.port
   # [root]=nginx.root
   # [index]=nginx.index
+  [status_path]=path.status
   [nginx_server_snippet]=nginx.server_snippet
 )
 

@@ -1,0 +1,17 @@
+[php-runtime]
+plan_path = "plan.sh"
+paths = [
+  "*"
+]
+
+[scaffolding-site]
+plan_path = "scaffolding-site/plan.sh"
+paths = [
+  "*"
+]
+
+[scaffolding-composite]
+plan_path = "scaffolding-composite/plan.sh"
+paths = [
+  "*"
+]

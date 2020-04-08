@@ -23,6 +23,8 @@ scaffolding_load() {
 
   # append exports
   _set_if_unset pkg_exports port "network.port"
+  _set_if_unset pkg_exports status_path "path.status"
+  _set_if_unset pkg_exports nginx_server_snippet "nginx.server_snippet"
 
   # configure projection
   if [ -z "${holo_args}" ]; then

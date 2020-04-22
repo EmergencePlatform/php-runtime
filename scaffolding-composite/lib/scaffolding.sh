@@ -90,7 +90,7 @@ _new_do_default_build_config() {
     > "${pkg_prefix}/default.toml" <<- END_OF_TOML
       [services]
         [services.app]
-        pkg_name = '${composite_app_pkg_name}'
+        pkg_ident = '${composite_app_pkg_origin}/${composite_app_pkg_name}'
           [services.app.binds]
             database = 'mysql'
         [services.mysql]

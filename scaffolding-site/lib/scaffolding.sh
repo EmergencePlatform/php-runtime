@@ -109,6 +109,9 @@ do_default_before() {
 }
 
 do_default_build() {
+  # disable ssh key verification for any fetch operations, our environment is disposable anyway
+  export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+
   pushd "${SRC_PATH}" > /dev/null
   holo_cmd="git holo project ${holo_args} ${holo_branch}"
   build_line "Running: ${holo_cmd}"

@@ -153,8 +153,12 @@ _new_do_default_build_config() {
   cp -nrv "$(pkg_path_for emergence/php-runtime)"/{config_install,config,hooks} "${pkg_prefix}/"
   toml-merge \
     "$(pkg_path_for emergence/php-runtime)/default.toml" \
+    - \
     "${PLAN_CONTEXT}/default.toml" \
-    > "${pkg_prefix}/default.toml"
+    > "${pkg_prefix}/default.toml" <<- END_OF_TOML
+      [extensions.opcache.config]
+        validate_timestamps = false
+END_OF_TOML
 }
 
 do_default_strip() {

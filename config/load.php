@@ -1,5 +1,8 @@
 <?php
 
+$coreRoot = '{{#if cfg.core.root}}{{ cfg.core.root }}{{else}}{{pkgPathFor "emergence/php-core" }}{{/if}}';
+require("${coreRoot}/src-compat/Cache.php");
+
 {{#if cfg.sites.default.holo.gitDir ~}}
     $gitDir = '{{ cfg.sites.default.holo.gitDir }}';
     $siteRoot = '{{ pkg.svc_var_path }}/site';
@@ -51,6 +54,17 @@ if (!$inputHash) {
 // ensure input is a tree hash
 $treeHash = exec("$git rev-parse --verify ${inputHash}^{tree}");
 
+
+// load list of changes
+if (file_exists("${siteRoot}.INDEX")) {
+    echo "comparing new tree to index\n";
+    exec("$git diff-index --cached --name-only $treeHash", $changedFiles);
+
+    // clear caches
+    foreach ($changedFiles as $changedFile) {
+        Cache::rawDelete("sha1:${siteRoot}/${changedFile}");
+    }
+}
 
 // load into working tree on disk
 echo "reading tree: $treeHash\n";

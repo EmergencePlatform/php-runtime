@@ -27,6 +27,9 @@ $hostname = empty($_SERVER['HTTP_HOST']) ? 'localhost' : parse_url($_SERVER['HTT
 // load bootstrap PHP code
 require("${coreRoot}/vendor/autoload.php");
 
+// configure core
+Site::$debug = {{#if cfg.core.debug}}true{{else}}false{{/if}};
+Site::$production = {{#if cfg.core.production}}true{{else}}false{{/if}};
 
 // load core
 Site::initialize($siteRoot, $hostname, [

@@ -156,6 +156,10 @@ _new_do_default_build_config() {
     - \
     "${PLAN_CONTEXT}/default.toml" \
     > "${pkg_prefix}/default.toml" <<- END_OF_TOML
+      [core]
+        debug = false
+        production = true
+
       [extensions.opcache.config]
         validate_timestamps = false
 END_OF_TOML

@@ -1,5 +1,7 @@
 [core]
 root = ""
+debug = true
+production = false
 
 [nginx]
 # root = "web/public"

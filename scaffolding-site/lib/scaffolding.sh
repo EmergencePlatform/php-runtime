@@ -43,7 +43,9 @@ scaffolding_load() {
 }
 
 scaffolding_detect_pkg_version() {
-  if [ -n "${pkg_last_tag}" ] && [ ${pkg_last_tag_distance} -eq 0 ]; then
+  if [ -n "${SITE_VERSION}" ]; then
+    echo "${SITE_VERSION}"
+  elif [ -n "${pkg_last_tag}" ] && [ ${pkg_last_tag_distance} -eq 0 ]; then
     echo "${pkg_last_version}"
   else
     echo "${pkg_last_version}-git"
@@ -89,14 +91,16 @@ do_default_before() {
   popd > /dev/null
 
   # load version information from git
-  pkg_commit="$(git rev-parse --short HEAD)"
-  pkg_last_tag="$(git describe --tags --abbrev=0 ${pkg_commit} 2>/dev/null || true)"
+  if [ -z "${SITE_VERSION}" ]; then
+    pkg_commit="$(git rev-parse --short HEAD)"
+    pkg_last_tag="$(git describe --tags --abbrev=0 ${pkg_commit} 2>/dev/null || true)"
 
-  if [ -n "${pkg_last_tag}" ]; then
-    pkg_last_version=${pkg_last_tag#v}
-    pkg_last_tag_distance="$(git rev-list ${pkg_last_tag}..${pkg_commit} --count)"
-  else
-    pkg_last_version="0.0.0"
+    if [ -n "${pkg_last_tag}" ]; then
+      pkg_last_version=${pkg_last_tag#v}
+      pkg_last_tag_distance="$(git rev-list ${pkg_last_tag}..${pkg_commit} --count)"
+    else
+      pkg_last_version="0.0.0"
+    fi
   fi
 
   # initialize pkg_version

@@ -91,7 +91,9 @@ do_default_before() {
   popd > /dev/null
 
   # load version information from git
-  if [ -z "${SITE_VERSION}" ]; then
+  if [ -n "${SITE_VERSION}" ]; then
+    build_line "Using provided version from SITE_VERSION: ${SITE_VERSION}"
+  else
     pkg_commit="$(git rev-parse --short HEAD)"
     pkg_last_tag="$(git describe --tags --abbrev=0 ${pkg_commit} 2>/dev/null || true)"
 
@@ -114,6 +116,7 @@ do_default_before() {
 
 do_default_build() {
   if [ -n "${SITE_TREE}" ]; then
+    build_line "Using provided projection from SITE_TREE: ${SITE_TREE}"
     holo_output_hash="${SITE_TREE}"
   else
     # disable ssh key verification for any fetch operations, our environment is disposable anyway

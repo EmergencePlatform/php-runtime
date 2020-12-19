@@ -113,14 +113,18 @@ do_default_before() {
 }
 
 do_default_build() {
-  # disable ssh key verification for any fetch operations, our environment is disposable anyway
-  export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+  if [ -n "${SITE_TREE}" ]; then
+    holo_output_hash="${SITE_TREE}"
+  else
+    # disable ssh key verification for any fetch operations, our environment is disposable anyway
+    export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 
-  pushd "${SRC_PATH}" > /dev/null
-  holo_cmd="git holo project ${holo_args} ${holo_branch}"
-  build_line "Running: ${holo_cmd}"
-  holo_output_hash="$($holo_cmd)"
-  popd > /dev/null
+    pushd "${SRC_PATH}" > /dev/null
+    holo_cmd="git holo project ${holo_args} ${holo_branch}"
+    build_line "Running: ${holo_cmd}"
+    holo_output_hash="$($holo_cmd)"
+    popd > /dev/null
+  fi
 }
 
 do_default_install() {

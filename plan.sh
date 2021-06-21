@@ -61,7 +61,7 @@ EOM
   build_line "Generating emergence-php-exec wrapper"
   cat > "${pkg_prefix}/bin/emergence-php-exec" <<- EOM
 #!/bin/bash
-exec ${pkg_svc_config_path}/fpm-exec \$@
+exec env -i ${pkg_svc_config_path}/fpm-exec \$@
 EOM
 
   fix_interpreter "${pkg_prefix}/bin/*" core/bash bin/bash

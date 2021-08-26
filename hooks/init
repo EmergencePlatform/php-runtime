@@ -11,4 +11,5 @@ mkdir -vp \
 chown -R hab:hab \
     "{{pkg.svc_var_path}}/logs" \
     "{{pkg.svc_var_path}}/site" \
-    "{{pkg.svc_data_path}}"
+    "{{pkg.svc_data_path}}" \
+    || true

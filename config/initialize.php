@@ -45,8 +45,8 @@ Site::initialize($siteRoot, $hostname, [
     'primary_hostname' => {{#if cfg.sites.default.primary_hostname}}{{toJson cfg.sites.default.primary_hostname}}{{else}}'localhost'{{/if}},
     'hostnames' => {{#if cfg.sites.default.hostnames}}{{toJson cfg.sites.default.hostnames}}{{else}}[]{{/if}},
 
-    {{#if cfg.sites.default.label ~}}
-    'label' => {{toJson cfg.sites.default.label}},
+    {{#if cfg.sites.default.title ~}}
+    'label' => {{toJson cfg.sites.default.title}},
 
     {{/if ~}}
 

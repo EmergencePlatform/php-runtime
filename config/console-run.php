@@ -55,6 +55,16 @@ $whoops->clearHandlers();
 $whoops->pushHandler($whoopsHandler);
 
 
+// set up system user session
+if (class_exists(Emergence\People\User::class)) {
+    $systemUser = Emergence\People\User::getByUsername('system');
+
+    if ($systemUser) {
+        $_SESSION['User'] = $systemUser;
+    }
+}
+
+
 // parse command + args
 list ($command, $args) = preg_split('/\s+/', $_SERVER['QUERY_STRING'], 2);
 $command = $command ? explode(':', $command) : null;

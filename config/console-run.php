@@ -61,6 +61,7 @@ if (class_exists(Emergence\People\User::class)) {
 
     if ($systemUser) {
         $_SESSION['User'] = $systemUser;
+        $GLOBALS['Session'] = UserSession::create([ 'Person' => $systemUser ]);
     }
 }
 

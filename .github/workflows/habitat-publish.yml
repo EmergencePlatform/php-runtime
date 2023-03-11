@@ -1,0 +1,47 @@
+name: 'Habitat: Publish and Promote Package'
+
+on:
+  push:
+    tags: [ 'v*' ]
+
+env:
+  HAB_LICENSE: accept-no-persist
+
+
+jobs:
+  habitat-publish:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: 'Initialize Chef Habitat environment'
+      uses: JarvusInnovations/habitat-action@action/v1
+      with:
+        deps: |
+          core/hab-plan-build
+
+    - uses: actions/checkout@v3
+
+    - name: Place tag in environment
+      run: |
+        echo "SOURCE_TAG=${GITHUB_REF:10}" >> $GITHUB_ENV
+        echo "REPO_NAME=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+
+    - name: Import origin key
+      run: |
+        hab origin key import <<END_OF_KEY
+        ${{ secrets.HAB_ORIGIN_KEY }}
+        END_OF_KEY
+
+        hab origin key import <<END_OF_KEY
+        ${{ secrets.HAB_ORIGIN_KEY_PUB }}
+        END_OF_KEY
+
+    - name: Build Habitat package
+      run: hab pkg exec core/hab-plan-build hab-plan-build .
+
+    - name: Upload Habitat package
+      env:
+        HAB_AUTH_TOKEN: '${{ secrets.HAB_AUTH_TOKEN }}'
+      run: |
+        source results/last_build.env
+        hab pkg upload "results/${pkg_artifact}" -c stable

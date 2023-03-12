@@ -7,41 +7,28 @@ on:
 env:
   HAB_LICENSE: accept-no-persist
 
-
 jobs:
   habitat-publish:
+
     runs-on: ubuntu-latest
     steps:
 
-    - name: 'Initialize Chef Habitat environment'
-      uses: JarvusInnovations/habitat-action@action/v1
-      with:
-        deps: |
-          core/hab-plan-build
-
     - uses: actions/checkout@v3
 
-    - name: Place tag in environment
+    - name: Setting pkg_version version
       run: |
-        echo "SOURCE_TAG=${GITHUB_REF:10}" >> $GITHUB_ENV
-        echo "REPO_NAME=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+        # extract version from tag name without 'v' prefix
+        pkg_version="${GITHUB_REF:11}"
 
-    - name: Import origin key
-      run: |
-        hab origin key import <<END_OF_KEY
-        ${{ secrets.HAB_ORIGIN_KEY }}
-        END_OF_KEY
+        # trim patch version to only set MAJOR.MINOR in Habitat
+        pkg_version="${pkg_version%.*}"
 
-        hab origin key import <<END_OF_KEY
-        ${{ secrets.HAB_ORIGIN_KEY_PUB }}
-        END_OF_KEY
+        # write into plan.sh
+        sed -i "/^pkg_version=.*/c\pkg_version='${pkg_version}'" plan.sh
 
-    - name: Build Habitat package
-      run: hab pkg exec core/hab-plan-build hab-plan-build .
-
-    - name: Upload Habitat package
-      env:
-        HAB_AUTH_TOKEN: '${{ secrets.HAB_AUTH_TOKEN }}'
-      run: |
-        source results/last_build.env
-        hab pkg upload "results/${pkg_artifact}" -c stable
+    - uses: JarvusInnovations/infra-components@channels/github-actions/habitat-publish/latest
+      with:
+        checkout: false
+        hab-origin-key-secret: ${{ secrets.HAB_ORIGIN_KEY }}
+        hab-origin-key-public: ${{ secrets.HAB_ORIGIN_KEY_PUB }}
+        hab-auth-token: ${{ secrets.HAB_AUTH_TOKEN }}

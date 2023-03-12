@@ -1,6 +1,6 @@
 pkg_name=php-runtime
 pkg_origin=emergence
-pkg_version="0.11"
+pkg_version='0.0.1'
 pkg_maintainer="Chris Alfano <chris@jarv.us>"
 pkg_license=("MIT")
 pkg_build_deps=(

@@ -39,7 +39,7 @@ jobs:
     - name: Upload scaffolding-site
       shell: bash
       env:
-        HAB_AUTH_TOKEN: '${{ inputs.hab-auth-token }}'
+        HAB_AUTH_TOKEN: ${{ secrets.HAB_AUTH_TOKEN }}
       run: |
         source results/last_build.env
         hab pkg upload "results/${pkg_artifact}" -c stable
@@ -50,7 +50,7 @@ jobs:
     - name: Upload scaffolding-composite
       shell: bash
       env:
-        HAB_AUTH_TOKEN: '${{ inputs.hab-auth-token }}'
+        HAB_AUTH_TOKEN: ${{ secrets.HAB_AUTH_TOKEN }}
       run: |
         source results/last_build.env
         hab pkg upload "results/${pkg_artifact}" -c stable

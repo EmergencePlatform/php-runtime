@@ -24,7 +24,7 @@ RUN hab pkg install \
         core/mysql \
         emergence/php-runtime \
         emergence/nginx \
-        && rm -rf /hab/cache/artifacts/ /hab/cache/src/
+    && rm -rf /hab/cache/artifacts/ /hab/cache/src/
 
 
 ### Additional target with build dependencies
@@ -37,5 +37,5 @@ RUN hab pkg install \
         jarvus/toml-merge \
         emergence/scaffolding-site \
         emergence/scaffolding-composite \
-        && rm -rf /hab/cache/artifacts/ /hab/cache/src/
+    && rm -rf /hab/cache/artifacts/ /hab/cache/src/
 

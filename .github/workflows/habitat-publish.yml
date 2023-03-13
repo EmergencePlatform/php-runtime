@@ -32,3 +32,25 @@ jobs:
         hab-origin-key-secret: ${{ secrets.HAB_ORIGIN_KEY }}
         hab-origin-key-public: ${{ secrets.HAB_ORIGIN_KEY_PUB }}
         hab-auth-token: ${{ secrets.HAB_AUTH_TOKEN }}
+
+    - name: Build scaffolding-site
+      run: hab pkg exec core/hab-plan-build hab-plan-build .
+
+    - name: Upload scaffolding-site
+      shell: bash
+      env:
+        HAB_AUTH_TOKEN: '${{ inputs.hab-auth-token }}'
+      run: |
+        source results/last_build.env
+        hab pkg upload "results/${pkg_artifact}" -c stable
+
+    - name: Build scaffolding-composite
+      run: hab pkg exec core/hab-plan-build hab-plan-build .
+
+    - name: Upload scaffolding-composite
+      shell: bash
+      env:
+        HAB_AUTH_TOKEN: '${{ inputs.hab-auth-token }}'
+      run: |
+        source results/last_build.env
+        hab pkg upload "results/${pkg_artifact}" -c stable

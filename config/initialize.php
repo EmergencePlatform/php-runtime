@@ -40,13 +40,13 @@ Site::initialize($siteRoot, $hostname, [
         'port' => '{{ member.cfg.port }}',
         'username' => '{{ member.cfg.username }}',
         'password' => '{{ member.cfg.password }}',
-        'database' => '{{#if ../cfg.sites.default.database}}{{ ../cfg.sites.default.database }}{{else}}default{{/if}}'
+        'database' => '{{ ../cfg.sites.default.database }}'
     ],
         {{~/if~}}
     {{~/eachAlive}}
 
     'handle' => 'default',
-    'primary_hostname' => {{#if cfg.sites.default.primary_hostname}}{{toJson cfg.sites.default.primary_hostname}}{{else}}'localhost'{{/if}},
+    'primary_hostname' => {{toJson cfg.sites.default.primary_hostname}},
     'hostnames' => {{#if cfg.sites.default.hostnames}}{{toJson cfg.sites.default.hostnames}}{{else}}[]{{/if}},
 
     {{#if cfg.sites.default.title ~}}

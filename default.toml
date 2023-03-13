@@ -1,3 +1,5 @@
+default_timezone = "America/New_York"
+
 [core]
 root = ""
 debug = false
@@ -7,3 +9,7 @@ production = true
 # root = "web/public"
 # index = "index.php"
 server_snippet = "# php-runtime nginx snippet"
+
+[sites.default]
+database = "emergence-site"
+primary_hostname = "localhost"

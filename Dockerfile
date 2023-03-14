@@ -18,13 +18,17 @@ CMD ["emergence-site/site-composite"]
 # generate origin key
 RUN hab origin key generate
 
-# install runtime dependencies
+# install dependencies
 RUN hab pkg install \
         core/bash \
         core/mysql \
-        emergence/php-runtime \
         emergence/nginx \
-    && rm -rf /hab/cache/artifacts/ /hab/cache/src/
+    && hab pkg exec core/coreutils rm -rf /hab/cache/artifacts/ /hab/cache/src/
+
+# install runtime
+ARG RUNTIME_PKG=emergence/php-runtime
+RUN hab pkg install ${RUNTIME_PKG} \
+    && hab pkg exec core/coreutils rm -rf /hab/cache/artifacts/ /hab/cache/src/
 
 
 ### Additional target with build dependencies
@@ -37,5 +41,5 @@ RUN hab pkg install \
         jarvus/toml-merge \
         emergence/scaffolding-site \
         emergence/scaffolding-composite \
-    && rm -rf /hab/cache/artifacts/ /hab/cache/src/
+    && hab pkg exec core/coreutils rm -rf /hab/cache/artifacts/ /hab/cache/src/
 

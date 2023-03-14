@@ -27,6 +27,7 @@ jobs:
         sed -i "/^pkg_version=.*/c\pkg_version='${pkg_version}'" plan.sh
 
     - uses: JarvusInnovations/infra-components@channels/github-actions/habitat-publish/latest
+      id: habitat-publish
       with:
         checkout: false
         hab-origin-key-secret: ${{ secrets.HAB_ORIGIN_KEY }}
@@ -55,10 +56,22 @@ jobs:
         source results/last_build.env
         hab pkg upload "results/${pkg_artifact}" -c stable
 
+    - name: Login to ghcr.io
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Pull :latest Docker container image for caching
+      run: docker pull "ghcr.io/${GITHUB_REPOSITORY,,}:runtime-deps" || true
+
     - name: Build Docker container image with runtime dependencies
       run: |
         docker build . \
+          --cache-from="ghcr.io/${GITHUB_REPOSITORY,,}:runtime-deps" \
           --build-arg=HAB_LICENSE=accept-no-persist \
+          --build-arg=RUNTIME_PKG=${{ steps.habitat-publish.outputs.pkg_ident }} \
           --target=runtime-deps \
           --tag="ghcr.io/${GITHUB_REPOSITORY,,}:runtime-deps"
 
@@ -69,13 +82,6 @@ jobs:
           --cache-from="ghcr.io/${GITHUB_REPOSITORY,,}:runtime-deps" \
           --target=build-deps \
           --tag="ghcr.io/${GITHUB_REPOSITORY,,}:build-deps"
-
-    - name: Login to ghcr.io
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Push runtime and build Docker container images
       run: |

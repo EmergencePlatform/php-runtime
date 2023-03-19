@@ -110,7 +110,7 @@ runs:
     if: ${{ inputs.image-pull-cache }}
     shell: bash
     env:
-      DOCKER_NAME: ${{ steps.determine-container-name.outputs.image-full-name }}
+      DOCKER_NAME: ${{ steps.determine-container-name.outputs.image-name-full }}
       DOCKER_TAG: ${{ inputs.image-pull-cache }}
     run: |
       docker pull "${DOCKER_NAME}:${DOCKER_TAG}"
@@ -124,7 +124,7 @@ runs:
       SITE_TREE: ${{ steps.project-site.outputs.tree }}
       SITE_VERSION: ${{ steps.determine-version.outputs.site-version }}
       DOCKER_CACHE_FROM: ${{ steps.pull-cache.outputs.cache-from }}
-      DOCKER_NAME: ${{ steps.determine-container-name.outputs.image-full-name }}
+      DOCKER_NAME: ${{ steps.determine-container-name.outputs.image-name-full }}
       DOCKER_TAG: latest
     run: ${{ github.action_path }}/build.sh
 
@@ -133,7 +133,7 @@ runs:
     shell: bash
     env:
       DOCKER_BUILD: ${{ steps.build-container.outputs.docker-build }}
-      DOCKER_NAME: ${{ steps.determine-container-name.outputs.image-full-name }}
+      DOCKER_NAME: ${{ steps.determine-container-name.outputs.image-name-full }}
       DOCKER_TAG: latest
     run: |
       docker tag "${DOCKER_BUILD}" "${DOCKER_NAME}:${DOCKER_TAG}"
@@ -144,7 +144,7 @@ runs:
     shell: bash
     env:
       DOCKER_BUILD: ${{ steps.build-container.outputs.docker-build }}
-      DOCKER_NAME: ${{ steps.determine-container-name.outputs.image-full-name }}
+      DOCKER_NAME: ${{ steps.determine-container-name.outputs.image-name-full }}
       DOCKER_TAG: ${{ steps.determine-version.outputs.site-version }}
     run: |
       docker tag "${DOCKER_BUILD}" "${DOCKER_NAME}:${DOCKER_TAG}"

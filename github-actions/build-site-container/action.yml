@@ -98,6 +98,8 @@ runs:
   - name: 'Project holobranch: ${{ inputs.site-ref }}=>${{ inputs.site-holobranch }}'
     id: project-site
     uses: JarvusInnovations/hologit@actions/projector/v1
+    env:
+      HAB_LICENSE: accept-no-persist
     with:
       fetch: false
       ref: ${{ inputs.site-ref }}

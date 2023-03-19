@@ -5,9 +5,9 @@ inputs:
     description: 'GitHub token'
     required: true
   image-name:
-    description: 'Name for built image'
+    description: 'Name for built image after repository name'
     required: false
-    default: 'site'
+    default: ''
   image-tag:
     description: 'Manual tag for built version'
     required: false
@@ -72,8 +72,13 @@ runs:
   - name: Determine full Docker container name
     id: determine-container-name
     shell: bash
+    env:
+      IMAGE_NAME: ${{ inputs.image-name }}
     run: |
-      IMAGE_NAME_FULL="ghcr.io/${GITHUB_REPOSITORY,,}/${{ inputs.image-name }}"
+      IMAGE_NAME_FULL="ghcr.io/${GITHUB_REPOSITORY,,}"
+      if [ -n "${IMAGE_NAME}" ]; then
+        IMAGE_NAME_FULL="${IMAGE_NAME_FULL}/${IMAGE_NAME}"
+      fi
 
       echo "Using IMAGE_NAME_FULL=${IMAGE_NAME_FULL}"
       echo "image-name-full=${IMAGE_NAME_FULL}" >> "${GITHUB_OUTPUT}"

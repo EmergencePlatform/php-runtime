@@ -66,7 +66,7 @@ runs:
         fi
       fi
 
-      echo "Using SITE_VERSION=${SITE_VERSION}"
+      echo "Outputting: site-version=${SITE_VERSION}"
       echo "site-version=${SITE_VERSION}" >> "${GITHUB_OUTPUT}"
 
   - name: Determine full Docker container name
@@ -80,7 +80,7 @@ runs:
         IMAGE_NAME_FULL="${IMAGE_NAME_FULL}/${IMAGE_NAME}"
       fi
 
-      echo "Using IMAGE_NAME_FULL=${IMAGE_NAME_FULL}"
+      echo "Outputting: image-name-full=${IMAGE_NAME_FULL}"
       echo "image-name-full=${IMAGE_NAME_FULL}" >> "${GITHUB_OUTPUT}"
 
   - name: Fetch Git source
@@ -114,6 +114,7 @@ runs:
       DOCKER_TAG: ${{ inputs.image-pull-cache }}
     run: |
       docker pull "${DOCKER_NAME}:${DOCKER_TAG}"
+      echo "Outputting: cache-from=${DOCKER_NAME}:${DOCKER_TAG}"
       echo "cache-from=${DOCKER_NAME}:${DOCKER_TAG}" >> "${GITHUB_OUTPUT}"
 
   - name: Build container image

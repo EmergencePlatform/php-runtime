@@ -43,3 +43,5 @@ RUN hab pkg install \
         emergence/scaffolding-composite \
     && hab pkg exec core/coreutils rm -rf /hab/cache/artifacts/ /hab/cache/src/
 
+# copy Habitat template in
+COPY ./habitat-template /src/habitat

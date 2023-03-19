@@ -82,11 +82,12 @@ do_default_before() {
 
   # configure git repository path
   pushd "${SRC_PATH}" > /dev/null
-  GIT_DIR="$(git rev-parse --git-dir)"
-  if [ -z "${GIT_DIR}" ]; then
+  GIT_DIR="$(git rev-parse --git-dir > /dev/null 2>&1 || true)"
+  if [ -n "${GIT_DIR}" ]; then
+    export GIT_DIR="$(realpath "${GIT_DIR}")"
+  elif [ "${SITE_TREE}" != "working" ]; then
     exit_with "Build must be run within a git repository" 11
   fi
-  export GIT_DIR="$(realpath "${GIT_DIR}")"
   build_line "Setting GIT_DIR=${GIT_DIR}"
   popd > /dev/null
 
@@ -133,7 +134,13 @@ do_default_build() {
 do_default_install() {
   build_line "Installing site"
   mkdir "${pkg_prefix}/site"
-  git archive --format=tar "${holo_output_hash}" | (cd "${pkg_prefix}/site" && tar xf -)
+
+  if [ "${holo_output_hash}" = "working" ]; then
+    cp -r ./* "${pkg_prefix}/site/"
+    rm -f "${pkg_prefix}/site/Dockerfile"
+  else
+    git archive --format=tar "${holo_output_hash}" | (cd "${pkg_prefix}/site" && tar xf -)
+  fi
 
   build_line "Installing web root"
   mkdir -p "${pkg_prefix}/web/public"

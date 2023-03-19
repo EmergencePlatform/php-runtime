@@ -88,7 +88,7 @@ runs:
     shell: bash
     env:
       SOURCE_AUTH: ${{ github.actor }}:${{ inputs.github-token }}
-      SOURCE_URL: github.com/${GITHUB_REPOSITORY}
+      SOURCE_URL: github.com/${{ github.repository }}
       SOURCE_REF: ${{ inputs.source-ref }}
     run: |
       git init

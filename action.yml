@@ -1,6 +1,9 @@
 name: 'Emergence: Build Site Container'
 description: 'Build a container from an emergence-site holobranch'
 inputs:
+  github-token:
+    description: 'GitHub token'
+    required: true
   image-name:
     description: 'Name for built image'
     required: false
@@ -79,7 +82,7 @@ runs:
     if: ${{ inputs.source-fetch == 'true' }}
     shell: bash
     env:
-      SOURCE_AUTH: ${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}
+      SOURCE_AUTH: ${{ github.actor }}:${{ inputs.github-token }}
       SOURCE_URL: github.com/${GITHUB_REPOSITORY}
       SOURCE_REF: ${{ inputs.source-ref }}
     run: |

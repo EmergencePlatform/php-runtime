@@ -1,0 +1,161 @@
+name: 'Emergence: Build Site Container'
+description: 'Build a container from an emergence-site holobranch'
+inputs:
+  github-token:
+    description: 'GitHub token'
+    required: true
+  image-name:
+    description: 'Name for built image after repository name'
+    required: false
+    default: ''
+  image-tag:
+    description: 'Manual tag for built version'
+    required: false
+  image-tag-latest:
+    description: 'Apply :latest tag automatically'
+    required: false
+    default: 'true'
+  image-tag-version:
+    description: 'Apply :${site-version} tag automatically'
+    required: false
+    default: 'true'
+  image-pull-cache:
+    description: 'Whether to pull a cache tag'
+    required: false
+    default: 'latest'
+  image-push:
+    description: 'Whether to push Docker images'
+    required: false
+    default: 'true'
+  source-ref:
+    description: 'Git ref for source tree to project site holobranch from'
+    required: false
+    default: ${{ github.ref }}
+  source-fetch:
+    description: 'Whether to check out the source repository'
+    required: false
+    default: 'true'
+  site-holobranch:
+    description: 'Name of holobranch to project'
+    required: false
+    default: 'emergence-site'
+  site-ref:
+    description: 'Git ref for already-proected site holobranch output to use (ignoring source-ref and site-holobranch)'
+    required: false
+  site-version:
+    description: 'Specify site version'
+    required: false
+
+runs:
+  using: composite
+  steps:
+
+  - name: Determine site version
+    id: determine-version
+    shell: bash
+    env:
+      SITE_VERSION: ${{ inputs.site-version }}
+    run: |
+      if [ -z "${SITE_VERSION}" ]; then
+        echo "Attempting to determine site version automatically"
+        if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+          SITE_VERSION="${GITHUB_REF:11}"
+        else
+          echo "Could not detect site version. Either specific site-version input or only trigger from v* tag push"
+          exit 1
+        fi
+      fi
+
+      echo "Outputting: site-version=${SITE_VERSION}"
+      echo "site-version=${SITE_VERSION}" >> "${GITHUB_OUTPUT}"
+
+  - name: Determine full Docker container name
+    id: determine-container-name
+    shell: bash
+    env:
+      IMAGE_NAME: ${{ inputs.image-name }}
+    run: |
+      IMAGE_NAME_FULL="ghcr.io/${GITHUB_REPOSITORY,,}"
+      if [ -n "${IMAGE_NAME}" ]; then
+        IMAGE_NAME_FULL="${IMAGE_NAME_FULL}/${IMAGE_NAME}"
+      fi
+
+      echo "Outputting: image-name-full=${IMAGE_NAME_FULL}"
+      echo "image-name-full=${IMAGE_NAME_FULL}" >> "${GITHUB_OUTPUT}"
+
+  - name: Log into ghcr.io
+    uses: docker/login-action@v2
+    with:
+      registry: ghcr.io
+      username: ${{ github.actor }}
+      password: ${{ inputs.github-token }}
+
+  - name: Fetch Git source
+    if: ${{ inputs.source-fetch == 'true' }}
+    shell: bash
+    env:
+      SOURCE_AUTH: ${{ github.actor }}:${{ inputs.github-token }}
+      SOURCE_URL: github.com/${{ github.repository }}
+      SOURCE_REF: ${{ inputs.source-ref }}
+    run: |
+      git init
+      git remote add origin "https://${SOURCE_AUTH}@${SOURCE_URL}"
+      git fetch --depth 1 origin "${SOURCE_REF}:${SOURCE_REF}"
+
+  - name: 'Project holobranch: ${{ inputs.site-ref }}=>${{ inputs.site-holobranch }}'
+    id: project-site
+    uses: JarvusInnovations/hologit@actions/projector/v1
+    env:
+      HAB_LICENSE: accept-no-persist
+    with:
+      fetch: false
+      ref: ${{ inputs.site-ref }}
+      holobranch: ${{ inputs.site-holobranch }}
+
+  - name: Pull :latest tag for cache
+    id: pull-cache
+    if: ${{ inputs.image-pull-cache }}
+    shell: bash
+    env:
+      DOCKER_NAME: ${{ steps.determine-container-name.outputs.image-name-full }}
+      DOCKER_TAG: ${{ inputs.image-pull-cache }}
+    run: |
+      if docker pull "${DOCKER_NAME}:${DOCKER_TAG}"; then
+        echo "Outputting: cache-from=${DOCKER_NAME}:${DOCKER_TAG}"
+        echo "cache-from=${DOCKER_NAME}:${DOCKER_TAG}" >> "${GITHUB_OUTPUT}"
+      else
+        echo "Failed to pull cache source: ${DOCKER_NAME}:${DOCKER_TAG}"
+      fi
+
+  - name: Build container image
+    id: build-container
+    shell: bash
+    env:
+      SITE_TREE: ${{ steps.project-site.outputs.tree }}
+      SITE_VERSION: ${{ steps.determine-version.outputs.site-version }}
+      DOCKER_CACHE_FROM: ${{ steps.pull-cache.outputs.cache-from }}
+      DOCKER_NAME: ${{ steps.determine-container-name.outputs.image-name-full }}
+      DOCKER_TAG: latest
+    run: ${{ github.action_path }}/build.sh
+
+  - name: Push :latest tag
+    if: ${{ inputs.image-push == 'true' && inputs.image-tag-latest == 'true' }}
+    shell: bash
+    env:
+      DOCKER_BUILD: ${{ steps.build-container.outputs.docker-build }}
+      DOCKER_NAME: ${{ steps.determine-container-name.outputs.image-name-full }}
+      DOCKER_TAG: latest
+    run: |
+      docker tag "${DOCKER_BUILD}" "${DOCKER_NAME}:${DOCKER_TAG}"
+      docker push "${DOCKER_NAME}:${DOCKER_TAG}"
+
+  - name: Push :${{ steps.determine-version.outputs.site-version }} tag
+    if: ${{ inputs.image-push == 'true' && inputs.image-tag-version == 'true' }}
+    shell: bash
+    env:
+      DOCKER_BUILD: ${{ steps.build-container.outputs.docker-build }}
+      DOCKER_NAME: ${{ steps.determine-container-name.outputs.image-name-full }}
+      DOCKER_TAG: ${{ steps.determine-version.outputs.site-version }}
+    run: |
+      docker tag "${DOCKER_BUILD}" "${DOCKER_NAME}:${DOCKER_TAG}"
+      docker push "${DOCKER_NAME}:${DOCKER_TAG}"

@@ -1,0 +1,21 @@
+name: Publish actions to develop stream
+
+on:
+  push:
+    branches: [develop]
+
+
+jobs:
+  actions-publish-develop:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: 'Update holobranch: github-actions/build-site-container/develop'
+      uses: JarvusInnovations/hologit@actions/projector/v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        HAB_LICENSE: accept-no-persist
+      with:
+        ref: develop
+        holobranch: github-actions/build-site-container
+        commit-to: github-actions/build-site-container/develop

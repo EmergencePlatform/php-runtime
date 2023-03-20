@@ -1,0 +1,27 @@
+name: Publish actions to major version stream
+
+on:
+  push:
+    tags: [ 'v*' ]
+
+
+jobs:
+  actions-publish-release:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Determine major version
+      run: |
+        VERSION_FULL="${GITHUB_REF:11}"
+        VERSION_MAJOR="${VERSION_FULL%%.*}"
+        echo "VERSION_MAJOR=${VERSION_MAJOR}" >> "${GITHUB_ENV}"
+
+    - name: 'Update holobranch: github-actions/build-site-container/v*'
+      uses: JarvusInnovations/hologit@actions/projector/v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        HAB_LICENSE: accept
+      with:
+        ref: ${{ env.GITHUB_REF }}
+        holobranch: github-actions/build-site-container
+        commit-to: actions/projector/v${{ env.VERSION_MAJOR }}

@@ -24,4 +24,4 @@ jobs:
       with:
         ref: ${{ env.GITHUB_REF }}
         holobranch: github-actions/build-site-container
-        commit-to: actions/projector/v${{ env.VERSION_MAJOR }}
+        commit-to: github-actions/build-site-container/v${{ env.VERSION_MAJOR }}

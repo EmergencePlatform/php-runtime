@@ -113,9 +113,12 @@ runs:
       DOCKER_NAME: ${{ steps.determine-container-name.outputs.image-name-full }}
       DOCKER_TAG: ${{ inputs.image-pull-cache }}
     run: |
-      docker pull "${DOCKER_NAME}:${DOCKER_TAG}"
-      echo "Outputting: cache-from=${DOCKER_NAME}:${DOCKER_TAG}"
-      echo "cache-from=${DOCKER_NAME}:${DOCKER_TAG}" >> "${GITHUB_OUTPUT}"
+      if docker pull "${DOCKER_NAME}:${DOCKER_TAG}"; then
+        echo "Outputting: cache-from=${DOCKER_NAME}:${DOCKER_TAG}"
+        echo "cache-from=${DOCKER_NAME}:${DOCKER_TAG}" >> "${GITHUB_OUTPUT}"
+      else
+        echo "Failed to pull cache source: ${DOCKER_NAME}:${DOCKER_TAG}"
+      fi
 
   - name: Build container image
     id: build-container

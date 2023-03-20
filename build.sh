@@ -26,11 +26,11 @@ DOCKER_CONTEXT=$(
 
 echo "Building with Git tree context ${DOCKER_CONTEXT}..."
 git archive --format=tar "${DOCKER_CONTEXT}" \
-| docker build - \
-    --build-arg="SITE_VERSION=${SITE_VERSION}" \
-    --build-arg="SITE_TREE=working" \
+| docker build \
     --cache-from="${DOCKER_CACHE_FROM}" \
-    --tag="${DOCKER_NAME}:${DOCKER_TAG}"
+    --build-arg="SITE_VERSION=${SITE_VERSION}" \
+    --tag="${DOCKER_NAME}:${DOCKER_TAG}" \
+    -
 
 echo "Outputting docker-build=${DOCKER_NAME}:${DOCKER_TAG}"
 echo "docker-build=${DOCKER_NAME}:${DOCKER_TAG}" >> "${GITHUB_OUTPUT}"

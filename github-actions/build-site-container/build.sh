@@ -27,6 +27,7 @@ DOCKER_CONTEXT=$(
 echo "Building with Git tree context ${DOCKER_CONTEXT}..."
 git archive --format=tar "${DOCKER_CONTEXT}" \
 | docker buildx build \
+    --cache-to type=inline \
     --cache-from="${DOCKER_CACHE_FROM}" \
     --build-arg="SITE_VERSION=${SITE_VERSION}" \
     --tag="${DOCKER_NAME}:${DOCKER_TAG}" \

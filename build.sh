@@ -38,7 +38,7 @@ fi
 
 echo "Building with Git tree context ${DOCKER_CONTEXT} and Docker params:" "${docker_args[@]}"
 
-git archive --format=tar "2bf6af438bf07df8420a88ad1e7eabc10ea0f9eb" \
+git archive --format=tar "${DOCKER_CONTEXT}" \
 | docker buildx build "${docker_args[@]}" -
 
 echo "Outputting docker-build=${DOCKER_NAME}:${DOCKER_TAG}"

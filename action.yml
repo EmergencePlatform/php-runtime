@@ -61,7 +61,7 @@ runs:
         if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
           SITE_VERSION="${GITHUB_REF:11}"
         else
-          echo "Could not detect site version. Either specific site-version input or only trigger from v* tag push"
+          echo "Could not detect site version. Either specify site-version input or only trigger from v* tag push"
           exit 1
         fi
       fi

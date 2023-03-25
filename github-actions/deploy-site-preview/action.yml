@@ -86,3 +86,4 @@ runs:
       image-name: ${{ inputs.image-name }}
       image-tag: ${{ steps.determine-container.outputs.image-tag }}
       image-push: 'false'
+      site-version: 0.0.0

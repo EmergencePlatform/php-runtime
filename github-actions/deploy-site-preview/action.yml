@@ -30,6 +30,9 @@ inputs:
     required: false
     default: ''
 outputs:
+  kube-namespace:
+    description: 'Namespace preview was deployed to'
+    value: ${{ steps.configure-kubectl.outputs.kube-namespace }}
   environment-name:
     description: 'Name of environment deployed to'
     value: ${{ steps.determine-environment.outputs.environment-name }}
@@ -68,7 +71,9 @@ runs:
     run: ${{ github.action_path }}/determine-container.sh
 
   - name: Configure kubectl
+    id: configure-kubectl
     shell: bash
     env:
       KUBE_CONFIG_DATA: ${{ inputs.kube-config }}
+      KUBE_NAMESPACE: ${{ inputs.kube-namespace }}
     run: ${{ github.action_path }}/configure-kubectl.sh

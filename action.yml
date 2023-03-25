@@ -11,7 +11,7 @@ inputs:
   image-tag:
     description: 'Manual tag for built version'
     required: false
-    default: 'latest'
+    default: ''
   image-tag-latest:
     description: 'Apply :latest tag automatically'
     required: false
@@ -60,7 +60,7 @@ outputs:
     value: ${{ steps.determine-container-name.outputs.image-name-full }}
   image-tag:
     description: 'Tag used for built container image'
-    value: ${{ inputs.image-tag }}
+    value: ${{ inputs.image-tag || 'latest' }}
   image-tag-full:
     description: 'Full registry+name+tag path used for built container image'
     value: ${{ steps.build-container.outputs.docker-build }}
@@ -163,7 +163,7 @@ runs:
       SITE_VERSION: ${{ steps.determine-version.outputs.site-version }}
       DOCKER_CACHE_FROM: ${{ steps.pull-cache.outputs.cache-from }}
       DOCKER_NAME: ${{ steps.determine-container-name.outputs.image-name-full }}
-      DOCKER_TAG: ${{ inputs.image-tag }}
+      DOCKER_TAG: ${{ inputs.image-tag || 'latest' }}
     run: ${{ github.action_path }}/build.sh
 
   - name: Push :${{ inputs.image-tag }} tag

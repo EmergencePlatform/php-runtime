@@ -1,0 +1,91 @@
+name: 'Emergence: Deploy Site Preview'
+description: 'Deploys a preview site from a branch'
+inputs:
+  github-token:
+    description: 'GitHub token'
+    required: true
+  kube-config:
+    description: 'Base64-encoded KUBECONFIG file content'
+    required: true
+  kube-namespace:
+    description: 'Namespace on Kubernetes cluster to deploy preview environment to'
+    required: true
+  kube-hostname:
+    description: 'Hostname suffix for preview environments'
+    required: true
+  environment-name:
+    description: 'Name for environment to deploy preview to'
+    required: false
+    default: ''
+  environment-transient:
+    description: 'Whether named environment is transient'
+    required: false
+    default: ''
+  image-name:
+    description: 'Name for built container image to append to repository name'
+    required: false
+    default: ''
+  image-tag:
+    description: 'Tag for built container image'
+    required: false
+    default: ''
+outputs:
+  kube-namespace:
+    description: 'Namespace preview was deployed to'
+    value: ${{ steps.configure-kubectl.outputs.kube-namespace }}
+  environment-name:
+    description: 'Name of environment deployed to'
+    value: ${{ steps.determine-environment.outputs.environment-name }}
+  environment-transient:
+    description: 'Whether deployed environment was marked transient'
+    value: ${{ steps.determine-environment.outputs.environment-transient }}
+  image-name-full:
+    description: 'Full registry+name path for built container image'
+    value: ${{ steps.determine-container.outputs.image-name-full }}
+  image-tag:
+    description: 'Tag used for built container image'
+    value: ${{ steps.determine-container.outputs.image-tag }}
+  image-tag-full:
+    description: 'Full registry+name+tag path used for built container image'
+    value: ${{ steps.determine-container.outputs.image-tag-full }}
+
+runs:
+  using: composite
+  steps:
+
+  - name: Determine environment to deploy to
+    id: determine-environment
+    shell: bash
+    env:
+      ENVIRONMENT_NAME: ${{ inputs.environment-name }}
+      ENVIRONMENT_TRANSIENT: ${{ inputs.environment-transient }}
+    run: ${{ github.action_path }}/determine-environment.sh
+
+  - name: Determine full Docker container name
+    id: determine-container
+    shell: bash
+    env:
+      IMAGE_NAME: ${{ inputs.image-name }}
+      IMAGE_TAG: ${{ inputs.image-tag }}
+      ENVIRONMENT_NAME: ${{ steps.determine-environment.outputs.environment-name }}
+    run: ${{ github.action_path }}/determine-container.sh
+
+  - name: Configure kubectl
+    id: configure-kubectl
+    shell: bash
+    env:
+      KUBE_CONFIG_DATA: ${{ inputs.kube-config }}
+      KUBE_NAMESPACE: ${{ inputs.kube-namespace }}
+    run: ${{ github.action_path }}/configure-kubectl.sh
+
+  - name: Build site container
+    id: build-site-container
+    uses: EmergencePlatform/php-runtime@github-actions/build-site-container/v1
+    with:
+      github-token: ${{ inputs.github-token }}
+      site-version: 0.0.0
+      image-name: ${{ inputs.image-name }}
+      image-tag: ${{ steps.determine-container.outputs.image-tag }}
+      image-tag-version: 'false'
+      image-tag-version-minor: 'false'
+      image-tag-version-major: 'false'

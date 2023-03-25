@@ -167,7 +167,7 @@ runs:
     run: ${{ github.action_path }}/build.sh
 
   - name: Push :${{ inputs.image-tag }} tag
-    if: ${{ inputs.image-push == 'true' && inputs.image-tag-latest == 'true' }}
+    if: ${{ inputs.image-push == 'true' && inputs.image-tag }}
     shell: bash
     env:
       DOCKER_BUILD: ${{ steps.build-container.outputs.docker-build }}

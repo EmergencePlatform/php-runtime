@@ -12,6 +12,14 @@ inputs:
     description: 'Whether named environment is transient'
     required: false
     default: ''
+  image-name:
+    description: 'Name for built container image to append to repository name'
+    required: false
+    default: ''
+  image-tag:
+    description: 'Tag for built container image'
+    required: false
+    default: ''
 outputs:
   environment-name:
     description: 'Name of environment deployed to'
@@ -19,6 +27,15 @@ outputs:
   environment-transient:
     description: 'Whether deployed environment was marked transient'
     value: ${{ steps.determine-environment.outputs.environment-transient }}
+  image-name-full:
+    description: 'Full registry+name path for built container image'
+    value: ${{ steps.determine-container.outputs.image-name-full }}
+  image-tag:
+    description: 'Tag used for built container image'
+    value: ${{ steps.determine-container.outputs.image-tag }}
+  image-tag-full:
+    description: 'Full registry+name+tag path used for built container image'
+    value: ${{ steps.determine-container.outputs.image-tag-full }}
 
 runs:
   using: composite
@@ -59,3 +76,31 @@ runs:
 
       echo "Outputting: environment-transient=${ENVIRONMENT_TRANSIENT}"
       echo "environment-transient=${ENVIRONMENT_TRANSIENT}" >> "${GITHUB_OUTPUT}"
+
+  - name: Determine full Docker container name
+    id: determine-container
+    shell: bash
+    env:
+      IMAGE_NAME: ${{ inputs.image-name }}
+      IMAGE_TAG: ${{ inputs.image-tag }}
+      ENVIRONMENT_NAME: ${{ steps.determine-environment.outputs.environment-name }}
+    run: |
+      IMAGE_NAME_FULL="ghcr.io/${GITHUB_REPOSITORY,,}"
+      if [ -n "${IMAGE_NAME}" ]; then
+        IMAGE_NAME_FULL="${IMAGE_NAME_FULL}/${IMAGE_NAME}"
+      fi
+
+      echo "Outputting: image-name-full=${IMAGE_NAME_FULL}"
+      echo "image-name-full=${IMAGE_NAME_FULL}" >> "${GITHUB_OUTPUT}"
+
+      if [ -z "${IMAGE_TAG}" ]; then
+        IMAGE_TAG="${ENVIRONMENT_NAME}"
+      fi
+
+      echo "Outputting: image-tag=${IMAGE_TAG}"
+      echo "image-tag=${IMAGE_TAG}" >> "${GITHUB_OUTPUT}"
+
+      IMAGE_TAG_FULL="${IMAGE_NAME_FULL}:${IMAGE_TAG}"
+
+      echo "Outputting: image-tag-full=${IMAGE_TAG_FULL}"
+      echo "image-tag-full=${IMAGE_TAG_FULL}" >> "${GITHUB_OUTPUT}"

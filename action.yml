@@ -56,7 +56,7 @@ runs:
     env:
       ENVIRONMENT_NAME: ${{ inputs.environment-name }}
       ENVIRONMENT_TRANSIENT: ${{ inputs.environment-transient }}
-    run: ${{ github.action_path }}/detrmine-environment.sh
+    run: ${{ github.action_path }}/determine-environment.sh
 
   - name: Determine full Docker container name
     id: determine-container
@@ -65,7 +65,7 @@ runs:
       IMAGE_NAME: ${{ inputs.image-name }}
       IMAGE_TAG: ${{ inputs.image-tag }}
       ENVIRONMENT_NAME: ${{ steps.determine-environment.outputs.environment-name }}
-    run: ${{ github.action_path }}/detrmine-container.sh
+    run: ${{ github.action_path }}/determine-container.sh
 
   - name: Configure kubectl
     shell: bash

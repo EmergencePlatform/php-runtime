@@ -83,7 +83,9 @@ runs:
     uses: EmergencePlatform/php-runtime@github-actions/build-site-container/develop # TODO: switch to v1
     with:
       github-token: ${{ inputs.github-token }}
+      site-version: 0.0.0
       image-name: ${{ inputs.image-name }}
       image-tag: ${{ steps.determine-container.outputs.image-tag }}
-      image-push: 'false'
-      site-version: 0.0.0
+      image-tag-version: 'false'
+      image-tag-version-minor: 'false'
+      image-tag-version-major: 'false'

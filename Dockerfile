@@ -3,7 +3,7 @@ FROM ghcr.io/emergenceplatform/php-runtime:build-deps as builder
 # input SITE parameters
 ENV SITE_TREE=working
 ARG SITE_VERSION
-ENV SITE_VERSION=0.0.1
+ENV SITE_VERSION=${SITE_VERSION}
 
 # build application
 COPY . /src

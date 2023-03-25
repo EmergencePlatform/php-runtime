@@ -82,7 +82,7 @@ runs:
     id: build-site-container
     uses: EmergencePlatform/php-runtime@github-actions/build-site-container/v1
     with:
-      github-token: ${{ secrets.GITHUB_TOKEN }}
+      github-token: ${{ inputs.github-token }}
       image-name: ${{ inputs.image-name }}
       image-tag: ${{ steps.determine-container.outputs.image-tag }}
       image-push: 'false'

@@ -4,6 +4,15 @@ inputs:
   github-token:
     description: 'GitHub token'
     required: true
+  kube-config:
+    description: 'Base64-encoded KUBECONFIG file content'
+    required: true
+  kube-namespace:
+    description: 'Namespace on Kubernetes cluster to deploy preview environment to'
+    required: true
+  kube-hostname:
+    description: 'Hostname suffix for preview environments'
+    required: true
   environment-name:
     description: 'Name for environment to deploy preview to'
     required: false
@@ -104,3 +113,11 @@ runs:
 
       echo "Outputting: image-tag-full=${IMAGE_TAG_FULL}"
       echo "image-tag-full=${IMAGE_TAG_FULL}" >> "${GITHUB_OUTPUT}"
+
+  - name: Configure kubectl
+    shell: bash
+    env:
+      KUBE_CONFIG_DATA: ${{ inputs.kube-config }}
+    run: |
+      test -e ~/.kube || mkdir ~/.kube
+      printf '%s' "$KUBE_CONFIG_DATA" | base64 -d > ~/.kube/config

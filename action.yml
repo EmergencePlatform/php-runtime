@@ -11,12 +11,21 @@ inputs:
   image-tag:
     description: 'Manual tag for built version'
     required: false
+    default: 'latest'
   image-tag-latest:
     description: 'Apply :latest tag automatically'
     required: false
-    default: 'true'
+    default: 'false'
   image-tag-version:
     description: 'Apply :${site-version} tag automatically'
+    required: false
+    default: 'true'
+  image-tag-version-minor:
+    description: 'Apply :${site-version-minor} tag automatically'
+    required: false
+    default: 'true'
+  image-tag-version-major:
+    description: 'Apply :${site-version-major} tag automatically'
     required: false
     default: 'true'
   image-pull-cache:
@@ -45,6 +54,16 @@ inputs:
   site-version:
     description: 'Specify site version'
     required: false
+outputs:
+  image-name-full:
+    description: 'Full registry+name path for built container image'
+    value: ${{ steps.determine-container-name.outputs.image-name-full }}
+  image-tag:
+    description: 'Tag used for built container image'
+    value: ${{ inputs.image-tag }}
+  image-tag-full:
+    description: 'Full registry+name+tag path used for built container image'
+    value: ${{ steps.build-container.outputs.docker-build }}
 
 runs:
   using: composite
@@ -61,13 +80,22 @@ runs:
         if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
           SITE_VERSION="${GITHUB_REF:11}"
         else
-          echo "Could not detect site version. Either specific site-version input or only trigger from v* tag push"
+          echo "Could not detect site version. Either specify site-version input or only trigger from v* tag push"
           exit 1
         fi
       fi
 
+      SITE_VERSION_MINOR="${SITE_VERSION%.*}"
+      SITE_VERSION_MAJOR="${SITE_VERSION%%.*}"
+
       echo "Outputting: site-version=${SITE_VERSION}"
       echo "site-version=${SITE_VERSION}" >> "${GITHUB_OUTPUT}"
+
+      echo "Outputting: site-version-minor=${SITE_VERSION_MINOR}"
+      echo "site-version-minor=${SITE_VERSION_MINOR}" >> "${GITHUB_OUTPUT}"
+
+      echo "Outputting: site-version-major=${SITE_VERSION_MAJOR}"
+      echo "site-version-major=${SITE_VERSION_MAJOR}" >> "${GITHUB_OUTPUT}"
 
   - name: Determine full Docker container name
     id: determine-container-name
@@ -135,11 +163,19 @@ runs:
       SITE_VERSION: ${{ steps.determine-version.outputs.site-version }}
       DOCKER_CACHE_FROM: ${{ steps.pull-cache.outputs.cache-from }}
       DOCKER_NAME: ${{ steps.determine-container-name.outputs.image-name-full }}
-      DOCKER_TAG: latest
+      DOCKER_TAG: ${{ inputs.image-tag }}
     run: ${{ github.action_path }}/build.sh
 
+  - name: Push :${{ inputs.image-tag }} tag
+    if: ${{ inputs.image-push == 'true' && inputs.image-tag }}
+    shell: bash
+    env:
+      DOCKER_BUILD: ${{ steps.build-container.outputs.docker-build }}
+    run: |
+      docker push "${DOCKER_BUILD}"
+
   - name: Push :latest tag
-    if: ${{ inputs.image-push == 'true' && inputs.image-tag-latest == 'true' }}
+    if: ${{ inputs.image-push == 'true' && inputs.image-tag-latest == 'true' && inputs.image-tag != 'latest' }}
     shell: bash
     env:
       DOCKER_BUILD: ${{ steps.build-container.outputs.docker-build }}
@@ -156,6 +192,28 @@ runs:
       DOCKER_BUILD: ${{ steps.build-container.outputs.docker-build }}
       DOCKER_NAME: ${{ steps.determine-container-name.outputs.image-name-full }}
       DOCKER_TAG: ${{ steps.determine-version.outputs.site-version }}
+    run: |
+      docker tag "${DOCKER_BUILD}" "${DOCKER_NAME}:${DOCKER_TAG}"
+      docker push "${DOCKER_NAME}:${DOCKER_TAG}"
+
+  - name: Push :${{ steps.determine-version.outputs.site-version-minor }} tag
+    if: ${{ inputs.image-push == 'true' && inputs.image-tag-version-minor == 'true' && steps.determine-version.outputs.site-version-minor }}
+    shell: bash
+    env:
+      DOCKER_BUILD: ${{ steps.build-container.outputs.docker-build }}
+      DOCKER_NAME: ${{ steps.determine-container-name.outputs.image-name-full }}
+      DOCKER_TAG: ${{ steps.determine-version.outputs.site-version-minor }}
+    run: |
+      docker tag "${DOCKER_BUILD}" "${DOCKER_NAME}:${DOCKER_TAG}"
+      docker push "${DOCKER_NAME}:${DOCKER_TAG}"
+
+  - name: Push :${{ steps.determine-version.outputs.site-version-major }} tag
+    if: ${{ inputs.image-push == 'true' && inputs.image-tag-version-minor == 'true' && steps.determine-version.outputs.site-version-major }}
+    shell: bash
+    env:
+      DOCKER_BUILD: ${{ steps.build-container.outputs.docker-build }}
+      DOCKER_NAME: ${{ steps.determine-container-name.outputs.image-name-full }}
+      DOCKER_TAG: ${{ steps.determine-version.outputs.site-version-major }}
     run: |
       docker tag "${DOCKER_BUILD}" "${DOCKER_NAME}:${DOCKER_TAG}"
       docker push "${DOCKER_NAME}:${DOCKER_TAG}"

@@ -80,7 +80,7 @@ runs:
 
   - name: Build site container
     id: build-site-container
-    uses: EmergencePlatform/php-runtime@github-actions/build-site-container/develop # TODO: switch to v1
+    uses: EmergencePlatform/php-runtime@github-actions/build-site-container/v1
     with:
       github-token: ${{ inputs.github-token }}
       site-version: 0.0.0

@@ -77,3 +77,12 @@ runs:
       KUBE_CONFIG_DATA: ${{ inputs.kube-config }}
       KUBE_NAMESPACE: ${{ inputs.kube-namespace }}
     run: ${{ github.action_path }}/configure-kubectl.sh
+
+  - name: Build site container
+    id: build-site-container
+    uses: EmergencePlatform/php-runtime@github-actions/build-site-container/v1
+    with:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+      image-name: ${{ inputs.image-name }}
+      image-tag: ${{ steps.determine-container.outputs.image-tag }}
+      image-push: 'false'

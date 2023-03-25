@@ -4,6 +4,9 @@ on:
   push:
     branches: [develop]
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  HAB_LICENSE: accept-no-persist
 
 jobs:
   actions-publish-develop:
@@ -12,10 +15,14 @@ jobs:
 
     - name: 'Update holobranch: github-actions/build-site-container/develop'
       uses: JarvusInnovations/hologit@actions/projector/v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        HAB_LICENSE: accept-no-persist
       with:
         ref: develop
         holobranch: github-actions/build-site-container
         commit-to: github-actions/build-site-container/develop
+
+    - name: 'Update holobranch: github-actions/deploy-site-preview/develop'
+      uses: JarvusInnovations/hologit@actions/projector/v1
+      with:
+        ref: develop
+        holobranch: github-actions/deploy-site-preview
+        commit-to: github-actions/deploy-site-preview/develop

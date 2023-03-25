@@ -56,35 +56,7 @@ runs:
     env:
       ENVIRONMENT_NAME: ${{ inputs.environment-name }}
       ENVIRONMENT_TRANSIENT: ${{ inputs.environment-transient }}
-    run: |
-      if [ -z "${ENVIRONMENT_NAME}" ]; then
-        echo "Attempting to determine environment name automatically"
-
-        if [ "${GITHUB_EVENT_NAME}" == "pull_request" ]; then
-          ENVIRONMENT_NAME="pr-$(jq --raw-output .pull_request.number "${GITHUB_EVENT_PATH}")"
-          ENVIRONMENT_TRANSIENT_DEFAULT='true'
-        elsif [ "${GITHUB_HEAD_REF}" == "$(jq --raw-output .repository.default_branch "${GITHUB_EVENT_PATH}")" ]; then
-          ENVIRONMENT_NAME='latest'
-          ENVIRONMENT_TRANSIENT_DEFAULT='false'
-        else
-          echo "Could not detect environment name. Either specify environment-name input or only trigger from pull request event"
-          exit 1
-        fi
-      fi
-
-      if [ -z "${ENVIRONMENT_TRANSIENT}" ]; then
-        if [ -n "${ENVIRONMENT_TRANSIENT_DEFAULT}" ]; then
-          ENVIRONMENT_TRANSIENT="${ENVIRONMENT_TRANSIENT_DEFAULT}"
-        else
-          ENVIRONMENT_TRANSIENT='true'
-        fi
-      fi
-
-      echo "Outputting: environment-name=${ENVIRONMENT_NAME}"
-      echo "environment-name=${ENVIRONMENT_NAME}" >> "${GITHUB_OUTPUT}"
-
-      echo "Outputting: environment-transient=${ENVIRONMENT_TRANSIENT}"
-      echo "environment-transient=${ENVIRONMENT_TRANSIENT}" >> "${GITHUB_OUTPUT}"
+    run: ${{ github.action_path }}/detrmine-environment.sh
 
   - name: Determine full Docker container name
     id: determine-container
@@ -93,31 +65,10 @@ runs:
       IMAGE_NAME: ${{ inputs.image-name }}
       IMAGE_TAG: ${{ inputs.image-tag }}
       ENVIRONMENT_NAME: ${{ steps.determine-environment.outputs.environment-name }}
-    run: |
-      IMAGE_NAME_FULL="ghcr.io/${GITHUB_REPOSITORY,,}"
-      if [ -n "${IMAGE_NAME}" ]; then
-        IMAGE_NAME_FULL="${IMAGE_NAME_FULL}/${IMAGE_NAME}"
-      fi
-
-      echo "Outputting: image-name-full=${IMAGE_NAME_FULL}"
-      echo "image-name-full=${IMAGE_NAME_FULL}" >> "${GITHUB_OUTPUT}"
-
-      if [ -z "${IMAGE_TAG}" ]; then
-        IMAGE_TAG="${ENVIRONMENT_NAME}"
-      fi
-
-      echo "Outputting: image-tag=${IMAGE_TAG}"
-      echo "image-tag=${IMAGE_TAG}" >> "${GITHUB_OUTPUT}"
-
-      IMAGE_TAG_FULL="${IMAGE_NAME_FULL}:${IMAGE_TAG}"
-
-      echo "Outputting: image-tag-full=${IMAGE_TAG_FULL}"
-      echo "image-tag-full=${IMAGE_TAG_FULL}" >> "${GITHUB_OUTPUT}"
+    run: ${{ github.action_path }}/detrmine-container.sh
 
   - name: Configure kubectl
     shell: bash
     env:
       KUBE_CONFIG_DATA: ${{ inputs.kube-config }}
-    run: |
-      test -e ~/.kube || mkdir ~/.kube
-      printf '%s' "$KUBE_CONFIG_DATA" | base64 -d > ~/.kube/config
+    run: ${{ github.action_path }}/configure-kubectl.sh

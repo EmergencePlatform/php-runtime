@@ -4,6 +4,9 @@ on:
   push:
     tags: [ 'v*' ]
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  HAB_LICENSE: accept
 
 jobs:
   actions-publish-release:
@@ -18,10 +21,14 @@ jobs:
 
     - name: 'Update holobranch: github-actions/build-site-container/v*'
       uses: JarvusInnovations/hologit@actions/projector/v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        HAB_LICENSE: accept
       with:
         ref: ${{ env.GITHUB_REF }}
         holobranch: github-actions/build-site-container
         commit-to: github-actions/build-site-container/v${{ env.VERSION_MAJOR }}
+
+    - name: 'Update holobranch: github-actions/deploy-site-preview/v*'
+      uses: JarvusInnovations/hologit@actions/projector/v1
+      with:
+        ref: ${{ env.GITHUB_REF }}
+        holobranch: github-actions/deploy-site-preview
+        commit-to: github-actions/deploy-site-preview/v${{ env.VERSION_MAJOR }}

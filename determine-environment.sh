@@ -6,7 +6,7 @@ if [ -z "${ENVIRONMENT_NAME}" ]; then
   if [ "${GITHUB_EVENT_NAME}" == "pull_request" ]; then
     ENVIRONMENT_NAME="pr-$(jq --raw-output .pull_request.number "${GITHUB_EVENT_PATH}")"
     ENVIRONMENT_TRANSIENT_DEFAULT='true'
-  elif [ "${GITHUB_HEAD_REF}" == "$(jq --raw-output .repository.default_branch "${GITHUB_EVENT_PATH}")" ]; then
+  elif [ "${GITHUB_REF_NAME}" == "$(jq --raw-output .repository.default_branch "${GITHUB_EVENT_PATH}")" ]; then
     ENVIRONMENT_NAME='latest'
     ENVIRONMENT_TRANSIENT_DEFAULT='false'
   else

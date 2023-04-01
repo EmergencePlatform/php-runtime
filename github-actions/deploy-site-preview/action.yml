@@ -37,6 +37,10 @@ inputs:
     description: 'Tag for built container image'
     required: false
     default: ''
+  helm-holobranch:
+    description: 'Name of holobranch to project Helm chart from'
+    required: false
+    default: 'helm-chart'
 outputs:
   kube-namespace:
     description: 'Namespace preview was deployed to'
@@ -99,3 +103,20 @@ runs:
       image-tag-version: 'false'
       image-tag-version-minor: 'false'
       image-tag-version-major: 'false'
+
+  - name: 'Project holobranch: ${{ inputs.source-ref }}=>${{ inputs.helm-holobranch }}'
+    id: project-helm-chart
+    uses: JarvusInnovations/hologit@actions/projector/v1
+    env:
+      HAB_LICENSE: accept-no-persist
+    with:
+      fetch: false
+      ref: ${{ inputs.source-ref }}
+      holobranch: ${{ inputs.helm-holobranch }}
+
+  - name: Deploy instance via Helm template
+    id: deploy-helm-chart
+    shell: bash
+    env:
+      HELM_CHART_TREE: ${{ steps.project-helm-chart.outputs.tree }}
+    run: ${{ github.action_path }}/deploy-helm-chart.sh

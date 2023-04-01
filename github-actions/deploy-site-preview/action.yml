@@ -4,6 +4,14 @@ inputs:
   github-token:
     description: 'GitHub token'
     required: true
+  source-ref:
+    description: 'Git ref for source tree to project site holobranch from'
+    required: false
+    default: ${{ github.ref }}
+  source-fetch:
+    description: 'Whether to check out the source repository'
+    required: false
+    default: 'true'
   kube-config:
     description: 'Base64-encoded KUBECONFIG file content'
     required: true
@@ -83,6 +91,8 @@ runs:
     uses: EmergencePlatform/php-runtime@github-actions/build-site-container/v1
     with:
       github-token: ${{ inputs.github-token }}
+      source-ref: ${{ inputs.source-ref }}
+      source-fetch: ${{ inputs.source-fetch }}
       site-version: 0.0.0
       image-name: ${{ inputs.image-name }}
       image-tag: ${{ steps.determine-container.outputs.image-tag }}

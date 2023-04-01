@@ -48,9 +48,9 @@ inputs:
     description: 'Name of holobranch to project'
     required: false
     default: 'emergence-site'
-  site-ref:
-    description: 'Git ref for already-proected site holobranch output to use (ignoring source-ref and site-holobranch)'
-    required: false
+  # site-ref:
+  #   description: 'Git ref for already-projected site holobranch output to use (ignoring source-ref and site-holobranch)'
+  #   required: false
   site-version:
     description: 'Specify site version'
     required: false
@@ -130,14 +130,14 @@ runs:
       git remote add origin "https://${SOURCE_AUTH}@${SOURCE_URL}"
       git fetch --depth 1 origin "${SOURCE_REF}:${SOURCE_REF}"
 
-  - name: 'Project holobranch: ${{ inputs.site-ref }}=>${{ inputs.site-holobranch }}'
+  - name: 'Project holobranch: ${{ inputs.source-ref }}=>${{ inputs.site-holobranch }}'
     id: project-site
     uses: JarvusInnovations/hologit@actions/projector/v1
     env:
       HAB_LICENSE: accept-no-persist
     with:
       fetch: false
-      ref: ${{ inputs.site-ref }}
+      ref: ${{ inputs.source-ref }}
       holobranch: ${{ inputs.site-holobranch }}
 
   - name: Pull :latest tag for cache

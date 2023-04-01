@@ -4,6 +4,14 @@ inputs:
   github-token:
     description: 'GitHub token'
     required: true
+  source-ref:
+    description: 'Git ref for source tree to project site holobranch from'
+    required: false
+    default: ${{ github.ref }}
+  source-fetch:
+    description: 'Whether to check out the source repository'
+    required: false
+    default: 'true'
   kube-config:
     description: 'Base64-encoded KUBECONFIG file content'
     required: true
@@ -29,6 +37,10 @@ inputs:
     description: 'Tag for built container image'
     required: false
     default: ''
+  helm-holobranch:
+    description: 'Name of holobranch to project Helm chart from'
+    required: false
+    default: 'helm-chart'
 outputs:
   kube-namespace:
     description: 'Namespace preview was deployed to'
@@ -83,9 +95,28 @@ runs:
     uses: EmergencePlatform/php-runtime@github-actions/build-site-container/v1
     with:
       github-token: ${{ inputs.github-token }}
+      source-ref: ${{ inputs.source-ref }}
+      source-fetch: ${{ inputs.source-fetch }}
       site-version: 0.0.0
       image-name: ${{ inputs.image-name }}
       image-tag: ${{ steps.determine-container.outputs.image-tag }}
       image-tag-version: 'false'
       image-tag-version-minor: 'false'
       image-tag-version-major: 'false'
+
+  - name: 'Project holobranch: ${{ inputs.source-ref }}=>${{ inputs.helm-holobranch }}'
+    id: project-helm-chart
+    uses: JarvusInnovations/hologit@actions/projector/v1
+    env:
+      HAB_LICENSE: accept-no-persist
+    with:
+      fetch: false
+      ref: ${{ inputs.source-ref }}
+      holobranch: ${{ inputs.helm-holobranch }}
+
+  - name: Deploy instance via Helm template
+    id: deploy-helm-chart
+    shell: bash
+    env:
+      HELM_CHART_TREE: ${{ steps.project-helm-chart.outputs.tree }}
+    run: ${{ github.action_path }}/deploy-helm-chart.sh

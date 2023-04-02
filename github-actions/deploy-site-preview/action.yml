@@ -129,3 +129,10 @@ runs:
       DOCKER_NAME: ${{ steps.build-site-container.outputs.image-name-full }}
       DOCKER_TAG: ${{ steps.build-site-container.outputs.image-tag }}
     run: ${{ github.action_path }}/deploy-helm-chart.sh
+
+  - name: Wait for Deployment to be ready
+    id: wait-for-deployment
+    shell: bash
+    env:
+      ENVIRONMENT_NAME: ${{ steps.determine-environment.outputs.environment-name }}
+    run: ${{ github.action_path }}/deploy-helm-chart.sh

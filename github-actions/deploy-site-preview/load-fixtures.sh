@@ -17,7 +17,7 @@ kubectl exec "${POD_NAME}" \
 echo
 echo "Loading fixtures..."
 (
-  for fixture_file in $(git ls-tree -r --name-only ${FIXTURES_TREE}); do
+  for fixture_file in $(git ls-tree -r --name-only "${FIXTURES_TREE}"); do
     git cat-file -p "${FIXTURES_TREE}:${fixture_file}"
   done
 ) | kubectl exec -i "${POD_NAME}" \

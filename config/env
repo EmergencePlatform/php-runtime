@@ -1,0 +1,15 @@
+{{#eachAlive bind.database.members as |member| ~}}
+{{#if @first ~}}
+
+{{#if member.cfg.host ~}}
+    MYSQL_HOST="{{ member.cfg.host }}"
+{{~ else ~}}
+    MYSQL_HOST="{{ member.sys.ip }}"
+{{~ /if}}
+MYSQL_PORT="{{ member.cfg.port }}"
+MYSQL_USER="{{ member.cfg.username }}"
+MYSQL_PASSWORD="{{ member.cfg.password }}"
+MYSQL_DATABASE="{{ ../cfg.sites.default.database }}"
+
+{{~ /if}}
+{{~ /eachAlive}}

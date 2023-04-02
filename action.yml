@@ -8,6 +8,12 @@ inputs:
     description: 'Name for environment to destroy'
     required: false
     default: ''
+  kube-config:
+    description: 'Base64-encoded KUBECONFIG file content'
+    required: true
+  kube-namespace:
+    description: 'Namespace on Kubernetes cluster to deploy preview environment to'
+    required: true
 
 runs:
   using: composite
@@ -32,7 +38,7 @@ runs:
     shell: bash
     env:
       ENVIRONMENT_NAME: ${{ steps.determine-environment.outputs.environment-name }}
-    run: ${{ github.action_path }}/delete environmentl.sh
+    run: ${{ github.action_path }}/delete-environmentl.sh
 
   - name: Deactivate GitHub deployment
     uses: bobheadxi/deployments@v1

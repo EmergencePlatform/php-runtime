@@ -59,10 +59,11 @@ echo "MySQL ready."
 
 echo
 echo "Finding default database..."
+# shellcheck disable=SC2016
 DATABASE_NAME=$(
   kubectl exec "${POD_NAME}" \
     -- hab pkg exec "${SERVICE_NAME}" \
-      -- mysql -N -e 'SELECT DATABASE()'
+      -- bash -c 'set -a; source /hab/svc/site/config/env; echo "${MYSQL_DATABASE}"'
 )
 echo "Outputting: database-name=${DATABASE_NAME}"
 echo "database-name=${DATABASE_NAME}" >> "${GITHUB_OUTPUT}"

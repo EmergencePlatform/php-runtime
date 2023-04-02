@@ -8,6 +8,7 @@ echo "Using: DOCKER_NAME=${DOCKER_NAME}"
 echo "Using: DOCKER_TAG=${DOCKER_TAG}"
 
 
+echo
 echo "Listing pods existing before deploy"
 kubectl get pods \
   -l app.kubernetes.io/instance="${ENVIRONMENT_NAME}" \
@@ -16,6 +17,7 @@ kubectl get pods \
 | tee /tmp/pods-before
 
 
+echo
 echo "Extracting projected helm-chart to temporary directory"
 temp_dir=$(mktemp -d)
 git archive --format=tar "${HELM_CHART_TREE}" | ( cd "${temp_dir}" && tar -xf - )
@@ -35,10 +37,12 @@ helm_args=(
   --set hab.license=accept-no-persist
 )
 
+echo
 echo "Using helm upgrade to apply helm-chart to release ${ENVIRONMENT_NAME} with params:" "${helm_args[@]}"
 helm upgrade "${ENVIRONMENT_NAME}" "${temp_dir}" "${helm_args[@]}"
 
 
+echo
 echo "Listing pods existing after deploy"
 kubectl get pods \
   -l app.kubernetes.io/instance="${ENVIRONMENT_NAME}" \
@@ -47,6 +51,7 @@ kubectl get pods \
 | tee /tmp/pods-after
 
 
+echo
 echo "Deleting stale pods to force image refresh"
 comm -12 /tmp/pods-before /tmp/pods-after \
 | xargs --no-run-if-empty kubectl delete pod

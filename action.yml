@@ -150,7 +150,7 @@ runs:
     shell: bash
     env:
       ENVIRONMENT_NAME: ${{ steps.determine-environment.outputs.environment-name }}
-    run: ${{ github.action_path }}/deploy-helm-chart.sh
+    run: ${{ github.action_path }}/wait-for-deployment.sh
 
   - name: 'Project holobranch: ${{ inputs.source-ref }}=>${{ inputs.fixtures-holobranch }}'
     id: project-fixtures

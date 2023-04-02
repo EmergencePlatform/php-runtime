@@ -8,6 +8,10 @@ inputs:
     description: 'Git ref for source tree to project site holobranch from'
     required: false
     default: ${{ github.ref }}
+  deployment-ref:
+    description: 'Git ref to associate deployment with'
+    required: false
+    default: ${{ github.head_ref }}
   source-fetch:
     description: 'Whether to check out the source repository'
     required: false
@@ -105,7 +109,7 @@ runs:
       step: start
       token: ${{ inputs.github-token }}
       env: ${{ steps.determine-environment.outputs.environment-name }}
-      ref: ${{ inputs.source-ref }}
+      ref: ${{ inputs.deployment-ref }}
       logs: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
       override: true
 
@@ -179,7 +183,7 @@ runs:
       token: ${{ inputs.github-token }}
       status: ${{ job.status }}
       env: ${{ steps.determine-environment.outputs.environment-name }}
-      ref: ${{ inputs.source-ref }}
+      ref: ${{ inputs.deployment-ref }}
       deployment_id: ${{ steps.deployment.outputs.deployment_id }}
       env_url: 'https://${{ steps.determine-environment.outputs.environment-hostname }}/'
       logs: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'

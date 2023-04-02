@@ -98,6 +98,17 @@ runs:
       KUBE_NAMESPACE: ${{ inputs.kube-namespace }}
     run: ${{ github.action_path }}/configure-kubectl.sh
 
+  - name: Start GitHub Deployment
+    uses: bobheadxi/deployments@v1
+    id: deployment
+    with:
+      step: start
+      token: ${{ secrets.GITHUB_TOKEN }}
+      env: ${{ steps.determine-environment.outputs.environment-name }}
+      ref: ${{ inputs.source-ref }}
+      logs: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+      override: true
+
   - name: Build site container
     id: build-site-container
     uses: EmergencePlatform/php-runtime@github-actions/build-site-container/v1
@@ -158,3 +169,16 @@ runs:
       SERVICE_NAME: ${{ stepswait-for-deployment.outputs.service-name }}
       DATABASE_NAME: ${{ stepswait-for-deployment.outputs.database-name }}
     run: ${{ github.action_path }}/load-fixtures.sh
+
+  - name: Finish GitHub Deployment
+    uses: bobheadxi/deployments@v1
+    if: ${{ always() }}
+    with:
+      step: finish
+      token: ${{ secrets.GITHUB_TOKEN }}
+      status: ${{ job.status }}
+      env: ${{ steps.determine-environment.outputs.environment-name }}
+      ref: ${{ inputs.source-ref }}
+      deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+      env_url: 'https://${{ steps.determine-environment.outputs.environment-hostname }}/'
+      logs: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'

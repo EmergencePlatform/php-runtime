@@ -38,7 +38,7 @@ runs:
     shell: bash
     env:
       ENVIRONMENT_NAME: ${{ steps.determine-environment.outputs.environment-name }}
-    run: ${{ github.action_path }}/delete environmentl.sh
+    run: ${{ github.action_path }}/delete-environmentl.sh
 
   - name: Deactivate GitHub deployment
     uses: bobheadxi/deployments@v1

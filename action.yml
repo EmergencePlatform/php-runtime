@@ -28,7 +28,13 @@ runs:
       KUBE_NAMESPACE: ${{ inputs.kube-namespace }}
     run: ${{ github.action_path }}/configure-kubectl.sh
 
-  - name: Start GitHub Deployment
+  - name: Delete environment
+    shell: bash
+    env:
+      ENVIRONMENT_NAME: ${{ steps.determine-environment.outputs.environment-name }}
+    run: ${{ github.action_path }}/delete environmentl.sh
+
+  - name: Deactivate GitHub deployment
     uses: bobheadxi/deployments@v1
     id: deployment
     with:

@@ -166,8 +166,8 @@ runs:
     shell: bash
     env:
       FIXTURES_TREE: ${{ steps.project-fixtures.outputs.tree }}
-      SERVICE_NAME: ${{ stepswait-for-deployment.outputs.service-name }}
-      DATABASE_NAME: ${{ stepswait-for-deployment.outputs.database-name }}
+      SERVICE_NAME: ${{ steps.wait-for-deployment.outputs.service-name }}
+      DATABASE_NAME: ${{ steps.wait-for-deployment.outputs.database-name }}
     run: ${{ github.action_path }}/load-fixtures.sh
 
   - name: Finish GitHub Deployment

@@ -103,7 +103,7 @@ runs:
     id: deployment
     with:
       step: start
-      token: ${{ secrets.GITHUB_TOKEN }}
+      token: ${{ inputs.github-token }}
       env: ${{ steps.determine-environment.outputs.environment-name }}
       ref: ${{ inputs.source-ref }}
       logs: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
@@ -175,7 +175,7 @@ runs:
     if: ${{ always() }}
     with:
       step: finish
-      token: ${{ secrets.GITHUB_TOKEN }}
+      token: ${{ inputs.github-token }}
       status: ${{ job.status }}
       env: ${{ steps.determine-environment.outputs.environment-name }}
       ref: ${{ inputs.source-ref }}

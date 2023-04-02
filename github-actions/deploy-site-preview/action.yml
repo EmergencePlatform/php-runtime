@@ -51,6 +51,9 @@ outputs:
   environment-transient:
     description: 'Whether deployed environment was marked transient'
     value: ${{ steps.determine-environment.outputs.environment-transient }}
+  environment-hostname:
+    description: 'Hostname that deployed environment is reachable at'
+    value: ${{ steps.determine-environment.outputs.environment-hostname }}
   image-name-full:
     description: 'Full registry+name path for built container image'
     value: ${{ steps.determine-container.outputs.image-name-full }}
@@ -71,6 +74,7 @@ runs:
     env:
       ENVIRONMENT_NAME: ${{ inputs.environment-name }}
       ENVIRONMENT_TRANSIENT: ${{ inputs.environment-transient }}
+      KUBE_HOSTNAME: ${{ inputs.kube-hostname }}
     run: ${{ github.action_path }}/determine-environment.sh
 
   - name: Determine full Docker container name
@@ -118,5 +122,10 @@ runs:
     id: deploy-helm-chart
     shell: bash
     env:
+      KUBE_NAMESPACE: ${{ inputs.kube-namespace }}
+      ENVIRONMENT_NAME: ${{ steps.determine-environment.outputs.environment-name }}
+      ENVIRONMENT_HOSTNAME: ${{ steps.determine-environment.outputs.environment-hostname }}
       HELM_CHART_TREE: ${{ steps.project-helm-chart.outputs.tree }}
+      DOCKER_NAME: ${{ steps.build-site-container.outputs.image-name-full }}
+      DOCKER_TAG: ${{ steps.build-site-container.outputs.image-tag }}
     run: ${{ github.action_path }}/deploy-helm-chart.sh

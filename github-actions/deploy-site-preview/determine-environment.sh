@@ -23,8 +23,13 @@ if [ -z "${ENVIRONMENT_TRANSIENT}" ]; then
   fi
 fi
 
+ENVIRONMENT_HOSTNAME="${ENVIRONMENT_NAME}.${KUBE_HOSTNAME}"
+
 echo "Outputting: environment-name=${ENVIRONMENT_NAME}"
 echo "environment-name=${ENVIRONMENT_NAME}" >>"${GITHUB_OUTPUT}"
 
 echo "Outputting: environment-transient=${ENVIRONMENT_TRANSIENT}"
 echo "environment-transient=${ENVIRONMENT_TRANSIENT}" >>"${GITHUB_OUTPUT}"
+
+echo "Outputting: environment-hostname=${ENVIRONMENT_HOSTNAME}"
+echo "environment-hostname=${ENVIRONMENT_HOSTNAME}" >>"${GITHUB_OUTPUT}"

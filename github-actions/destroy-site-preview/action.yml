@@ -8,6 +8,12 @@ inputs:
     description: 'Name for environment to destroy'
     required: false
     default: ''
+  kube-config:
+    description: 'Base64-encoded KUBECONFIG file content'
+    required: true
+  kube-namespace:
+    description: 'Namespace on Kubernetes cluster to deploy preview environment to'
+    required: true
 
 runs:
   using: composite

@@ -41,6 +41,10 @@ inputs:
     description: 'Name of holobranch to project Helm chart from'
     required: false
     default: 'helm-chart'
+  fixtures-holobranch:
+    description: 'Name of holobranch to project SQL fixtures from'
+    required: false
+    default: 'fixtures'
 outputs:
   kube-namespace:
     description: 'Namespace preview was deployed to'
@@ -136,3 +140,21 @@ runs:
     env:
       ENVIRONMENT_NAME: ${{ steps.determine-environment.outputs.environment-name }}
     run: ${{ github.action_path }}/deploy-helm-chart.sh
+
+  - name: 'Project holobranch: ${{ inputs.source-ref }}=>${{ inputs.fixtures-holobranch }}'
+    id: project-fixtures
+    uses: JarvusInnovations/hologit@actions/projector/v1
+    env:
+      HAB_LICENSE: accept-no-persist
+    with:
+      fetch: false
+      ref: ${{ inputs.source-ref }}
+      holobranch: ${{ inputs.fixtures-holobranch }}
+
+  - name: Load fixtures into database
+    shell: bash
+    env:
+      FIXTURES_TREE: ${{ steps.project-fixtures.outputs.tree }}
+      SERVICE_NAME: ${{ stepswait-for-deployment.outputs.service-name }}
+      DATABASE_NAME: ${{ stepswait-for-deployment.outputs.database-name }}
+    run: ${{ github.action_path }}/load-fixtures.sh

@@ -1,0 +1,37 @@
+name: 'Emergence: Destroy Site Preview'
+description: 'Destroy a preview site'
+inputs:
+  github-token:
+    description: 'GitHub token'
+    required: true
+  environment-name:
+    description: 'Name for environment to destroy'
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+
+  - name: Determine environment to destroy
+    id: determine-environment
+    shell: bash
+    env:
+      ENVIRONMENT_NAME: ${{ inputs.environment-name }}
+    run: ${{ github.action_path }}/determine-environment.sh
+
+  - name: Configure kubectl
+    id: configure-kubectl
+    shell: bash
+    env:
+      KUBE_CONFIG_DATA: ${{ inputs.kube-config }}
+      KUBE_NAMESPACE: ${{ inputs.kube-namespace }}
+    run: ${{ github.action_path }}/configure-kubectl.sh
+
+  - name: Start GitHub Deployment
+    uses: bobheadxi/deployments@v1
+    id: deployment
+    with:
+      step: deactivate-env
+      token: ${{ inputs.github-token }}
+      env: ${{ steps.determine-environment.outputs.environment-name }}

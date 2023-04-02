@@ -26,3 +26,10 @@ jobs:
         ref: develop
         holobranch: github-actions/deploy-site-preview
         commit-to: github-actions/deploy-site-preview/develop
+
+    - name: 'Update holobranch: github-actions/destroy-site-preview/develop'
+      uses: JarvusInnovations/hologit@actions/projector/v1
+      with:
+        ref: develop
+        holobranch: github-actions/destroy-site-preview
+        commit-to: github-actions/destroy-site-preview/develop

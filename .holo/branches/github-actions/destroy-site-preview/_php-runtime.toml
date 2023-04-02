@@ -1,0 +1,5 @@
+[holomapping]
+root = "github-actions/destroy-site-preview"
+files = [
+    "**"
+]

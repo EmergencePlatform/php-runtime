@@ -32,3 +32,10 @@ jobs:
         ref: ${{ env.GITHUB_REF }}
         holobranch: github-actions/deploy-site-preview
         commit-to: github-actions/deploy-site-preview/v${{ env.VERSION_MAJOR }}
+
+    - name: 'Update holobranch: github-actions/destroy-site-preview/v*'
+      uses: JarvusInnovations/hologit@actions/projector/v1
+      with:
+        ref: ${{ env.GITHUB_REF }}
+        holobranch: github-actions/destroy-site-preview
+        commit-to: github-actions/destroy-site-preview/v${{ env.VERSION_MAJOR }}

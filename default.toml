@@ -11,5 +11,6 @@ production = true
 server_snippet = "# php-runtime nginx snippet"
 
 [sites.default]
+handle = "default"
 database = "emergence-site"
 primary_hostname = "localhost"

@@ -45,7 +45,7 @@ Site::initialize($siteRoot, $hostname, [
         {{~/if~}}
     {{~/eachAlive}}
 
-    'handle' => 'default',
+    'handle' => {{toJson cfg.sites.default.handle}},
     'primary_hostname' => {{toJson cfg.sites.default.primary_hostname}},
     'hostnames' => {{#if cfg.sites.default.hostnames}}{{toJson cfg.sites.default.hostnames}}{{else}}[]{{/if}},
 

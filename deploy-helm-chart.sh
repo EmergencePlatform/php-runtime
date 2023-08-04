@@ -28,7 +28,7 @@ helm_args=(
   --install
   --namespace "${KUBE_NAMESPACE}"
   --set site.name="${ENVIRONMENT_NAME}"
-  --set site.title="laddr/${ENVIRONMENT_NAME}"
+  --set site.title="${KUBE_NAMESPACE}/${ENVIRONMENT_NAME}"
   --set site.image.repository="${DOCKER_NAME}"
   --set site.image.tag="${DOCKER_TAG}"
   --set ingress.enabled=true

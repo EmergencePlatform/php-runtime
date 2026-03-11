@@ -1,0 +1,20 @@
+# Build a generic site-base image from an existing working emergence site container.
+# This strips the site-specific application code, leaving all Habitat runtime
+# infrastructure intact. New site containers can then simply overlay their
+# projected holo tree on top.
+#
+# Usage:
+#   docker build -f Dockerfile.site-base \
+#     --build-arg DONOR_IMAGE=ghcr.io/codeforphilly/codeforphilly.org:latest \
+#     -t ghcr.io/emergenceplatform/php-runtime:site-base .
+#
+ARG DONOR_IMAGE
+FROM ${DONOR_IMAGE}
+
+# Create a stable symlink to the site package path and clear the site code
+ENV SITE_PKG_PATH=/hab/pkgs/emergence-site/site/current
+RUN REAL_PATH=$(find /hab/pkgs/emergence-site/site -maxdepth 2 -mindepth 2 -type d | head -1) \
+    && echo "Detected site package: ${REAL_PATH}" \
+    && rm -rf "${REAL_PATH}/site" \
+    && mkdir "${REAL_PATH}/site" \
+    && ln -snf "${REAL_PATH}" "${SITE_PKG_PATH}"

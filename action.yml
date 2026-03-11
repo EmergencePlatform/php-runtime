@@ -28,10 +28,6 @@ inputs:
     description: 'Apply :${site-version-major} tag automatically'
     required: false
     default: 'true'
-  image-pull-cache:
-    description: 'Whether to pull a cache tag'
-    required: false
-    default: 'latest'
   image-push:
     description: 'Whether to push Docker images'
     required: false
@@ -140,28 +136,12 @@ runs:
       ref: ${{ inputs.source-ref }}
       holobranch: ${{ inputs.site-holobranch }}
 
-  - name: Pull :latest tag for cache
-    id: pull-cache
-    if: ${{ inputs.image-pull-cache }}
-    shell: bash
-    env:
-      DOCKER_NAME: ${{ steps.determine-container-name.outputs.image-name-full }}
-      DOCKER_TAG: ${{ inputs.image-pull-cache }}
-    run: |
-      if docker pull "${DOCKER_NAME}:${DOCKER_TAG}"; then
-        echo "Outputting: cache-from=${DOCKER_NAME}:${DOCKER_TAG}"
-        echo "cache-from=${DOCKER_NAME}:${DOCKER_TAG}" >> "${GITHUB_OUTPUT}"
-      else
-        echo "Failed to pull cache source: ${DOCKER_NAME}:${DOCKER_TAG}"
-      fi
-
   - name: Build container image
     id: build-container
     shell: bash
     env:
       SITE_TREE: ${{ steps.project-site.outputs.tree }}
       SITE_VERSION: ${{ steps.determine-version.outputs.site-version }}
-      DOCKER_CACHE_FROM: ${{ steps.pull-cache.outputs.cache-from }}
       DOCKER_NAME: ${{ steps.determine-container-name.outputs.image-name-full }}
       DOCKER_TAG: ${{ inputs.image-tag || 'latest' }}
     run: ${{ github.action_path }}/build.sh

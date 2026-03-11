@@ -2,7 +2,6 @@
 
 echo "Using: SITE_TREE=${SITE_TREE}"
 echo "Using: SITE_VERSION=${SITE_VERSION}"
-echo "Using: DOCKER_CACHE_FROM=${DOCKER_CACHE_FROM}"
 echo "Using: DOCKER_NAME=${DOCKER_NAME}"
 echo "Using: DOCKER_TAG=${DOCKER_TAG}"
 
@@ -25,16 +24,9 @@ DOCKER_CONTEXT=$(
 )
 
 docker_args=(
-    --cache-to=type=inline
     --build-arg="SITE_VERSION=${SITE_VERSION}"
     --tag="${DOCKER_NAME}:${DOCKER_TAG}"
 )
-
-if [ -n "${DOCKER_CACHE_FROM}" ]; then
-    docker_args+=(
-         --cache-from="${DOCKER_CACHE_FROM}"
-    )
-fi
 
 echo "Building with Git tree context ${DOCKER_CONTEXT} and Docker params:" "${docker_args[@]}"
 
